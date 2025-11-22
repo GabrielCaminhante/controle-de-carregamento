@@ -111,7 +111,7 @@ io.on("connection", async (socket) => {
     agendamento: agendamentos.rows
   });
 
-  // Exemplo de atualização via socket
+  // Atualização via socket
   socket.on("atualizarPainel", async () => {
     const transportadoras = await pool.query("SELECT * FROM transportadoras");
     const agendamentos = await pool.query("SELECT * FROM agendamentos");
