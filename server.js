@@ -45,12 +45,31 @@ app.get("/cadastros", async (req, res) => {
 
 app.put("/cadastro/:id", async (req, res) => {
   const { id } = req.params;
-  const { transportadora, motorista, contato } = req.body;
+  const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
   await pool.query(
-    `UPDATE transportadoras SET transportadora=$1, motorista=$2, contato=$3 WHERE id=$4`,
-    [transportadora.trim(), motorista.trim(), contato.trim(), id]
+    `UPDATE transportadoras 
+     SET transportadora = COALESCE($1, transportadora),
+         motorista = COALESCE($2, motorista),
+         contato = COALESCE($3, contato),
+         responsavel = COALESCE($4, responsavel),
+         contato_responsavel = COALESCE($5, contato_responsavel)
+     WHERE id = $6`,
+    [
+      transportadora?.trim() || null,
+      motorista?.trim() || null,
+      contato?.trim() || null,
+      responsavel?.trim() || null,
+      contatoResponsavel?.trim() || null,
+      id
+    ]
   );
+
+  const result = await pool.query("SELECT * FROM transportadoras");
+  io.emit("estadoAtualizado", { transportadoras: result.rows });
+
+  res.json({ message: "Cadastro atualizado com sucesso!" });
+});
 
   const result = await pool.query("SELECT * FROM transportadoras");
   io.emit("estadoAtualizado", { transportadoras: result.rows });
@@ -127,3 +146,4 @@ io.on("connection", async (socket) => {
 server.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
+
