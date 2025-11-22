@@ -1,0 +1,276 @@
+/* 🌐 Layout geral */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 20px;
+  margin: 0;
+}
+
+/* 🏷️ Título principal dentro do painel */
+.titulo-principal {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ff6b6b;
+  text-align: center;
+  margin-bottom: 15px; /* 🔧 menos espaço */
+}
+
+/* 🎯 Painéis (cadastro e tabela) */
+.painel-cadastro,
+.tabela-cadastrados {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 20px; /* 🔧 mais compacto */
+  margin: 0 auto 25px auto;
+  width: 100%;
+  max-width: 900px; /* largura unificada */
+  border: 1px solid #ff6b6b;
+  box-sizing: border-box;
+}
+
+/* 🧾 Títulos internos */
+.painel-cadastro h2,
+.tabela-cadastrados h2,
+.tabela-cadastrados h3 {
+  color: #ff6b6b;
+  font-size: 1.1rem;
+  margin: 10px 0 8px; /* 🔧 menos espaço */
+  font-weight: 600;
+  text-align: center; /* 🔧 centralizado */
+}
+
+/* 🧾 Labels e campos */
+.painel-cadastro label {
+  display: block;
+  margin-bottom: 3px; /* 🔧 menos espaço */
+  font-weight: 600;
+  color: #333;
+}
+
+.painel-cadastro input[type="text"],
+.painel-cadastro input[type="tel"] {
+  width: 100%;
+  padding: 8px;              /* 🔧 altura menor */
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 10px;       /* 🔧 menos espaço entre campos */
+  box-sizing: border-box;
+  min-height: 36px;          /* 🔧 altura mínima compacta */
+}
+
+/* 🔘 Botões principais */
+.botoes-admin {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* 🔧 menos espaço entre botões */
+  margin-top: 12px; /* 🔧 menos espaço acima */
+}
+
+.botoes-admin button {
+  padding: 8px 14px; /* 🔧 botão menor */
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem; /* 🔧 texto menor */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  min-width: 120px; /* 🔧 largura menor */
+}
+
+.botoes-admin button:hover {
+  background-color: #e04646;
+  transform: scale(1.05);
+}
+
+/* 🔘 Botão de imprimir abaixo da tabela */
+#btnPDF {
+  display: block;
+  margin: 20px auto 0 auto; /* 🔧 espaçamento acima e centralizado */
+  padding: 8px 14px;
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#btnPDF:hover {
+  background-color: #e04646;
+}
+
+/* 🗑️ Botões dentro da tabela (Editar, Remover, Salvar) */
+.tabela-cadastrados button {
+  padding: 6px 10px; /* 🔧 menor altura/largura */
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.8rem; /* 🔧 texto menor */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin: 2px;
+}
+
+.tabela-cadastrados button:hover {
+  background-color: #e04646;
+  transform: scale(1.05);
+}
+
+/* 🧾 Tabelas */
+.tabela-cadastrados table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-top: 10px; /* 🔧 menos espaço */
+}
+
+.tabela-cadastrados th {
+  background-color: #ff6b6b;
+  color: #fff;
+  font-weight: 700;
+  padding: 10px;
+  text-align: center;
+}
+
+.tabela-cadastrados td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.tabela-cadastrados tbody tr:nth-child(even) {
+  background-color: #fdf2f2;
+}
+
+/* 📌 Tile da transportadora */
+.tile-transportadora {
+  border: 1px solid #ff6b6b;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* 👤 Cabeçalho do responsável */
+.responsavel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fdf2f2;
+  border: 1px solid #ff6b6b;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.responsavel-header p {
+  margin: 0 10px 0 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.responsavel-header strong {
+  color: #ff6b6b;
+}
+
+/* 🔘 Botão editar/salvar do responsável */
+.responsavel-header button {
+  padding: 6px 12px;
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.responsavel-header button:hover {
+  background-color: #e04646;
+  transform: scale(1.05);
+}
+
+/* 📱 Responsividade */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .titulo-principal {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+
+  .painel-cadastro,
+  .tabela-cadastrados {
+    padding: 15px;
+    max-width: 100%;
+  }
+
+  .painel-cadastro h2,
+  .tabela-cadastrados h2,
+  .tabela-cadastrados h3 {
+    font-size: 1rem;
+  }
+
+  .painel-cadastro input[type="text"],
+  .painel-cadastro input[type="tel"] {
+    font-size: 0.85rem;
+    padding: 7px;
+    min-height: 34px;
+  }
+
+  .botoes-admin {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .botoes-admin button {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 8px;
+    min-width: auto;
+  }
+
+  #btnPDF {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .tabela-cadastrados table {
+    font-size: 0.8rem;
+    min-width: 600px; /* permite rolagem horizontal */
+  }
+
+  .tabela-cadastrados th,
+  .tabela-cadastrados td {
+    padding: 6px;
+  }
+
+  .tabela-cadastrados button {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+  }
+
+  .responsavel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .responsavel-header button {
+    width: 100%;
+    text-align: center;
+  }
+}

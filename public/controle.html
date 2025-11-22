@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Cargas</title>
+  <link rel="stylesheet" href="controle.css">
+</head>
+<body>
+  <!-- 🔶 SEÇÃO: TABELA DE CONTROLE DE CARGAS -->
+<div class="cabecalho-controle">
+  <h1 class="titulo-local">🍊Controle de Cargas Braspolpa 🍊</h1>
+  <button id="botao-pdf" onclick="gerarPDFCargas()">📄 Gerar PDF</button>
+  <button id="botao-resetar" onclick="resetarTabelaControleDeCargas()">🔄 Resetar Cargas</button>
+  <button onclick="abrirPainelMotorista()" class="botao-link">Painel do Motorista 🚛</button>
+  <button onclick="abrirPainelCadastro()">📝 Cadastro de Transportadoras e Motoristas</button>
+</div>
+
+  <div class="tabela-container">
+    <div class="tabela-scroll">
+      <table id="tabela-cargas">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Cliente</th>
+            <th>Motorista</th>
+            <th>Horário de Saída</th>
+            <th>N° Carga</th>
+            <th>Marcar ação</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-carregamento">
+          <!-- Linhas serão geradas dinamicamente via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🔶 SEÇÃO: AGENDAMENTO SEMANAL -->
+  <h2 class="titulo-local">Agendamento Semanal</h2>
+  <div class="botoes-agendamento"></div>
+  <div class="tabela-container">
+    <div class="tabela-scroll">
+      <table id="tabela-agendamento-semanal">
+        <thead>
+          <tr>
+            <th>Transportadora</th>
+            <th>Segunda</th>
+            <th>Terça</th>
+            <th>Quarta</th>
+            <th>Quinta</th>
+            <th>Sexta</th>
+            <th>Sábado</th>
+            <th>Domingo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Linhas serão geradas dinamicamente via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🔧 SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="controle.js"></script>
+</body>
+</html>

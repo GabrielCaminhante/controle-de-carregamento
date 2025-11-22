@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de Transportadoras e Motoristas</title>
+  <link rel="stylesheet" href="cadastro.css" />
+</head>
+<body>
+  <main>
+    <!-- 📋 Painel de cadastro -->
+    <div class="painel-cadastro">
+      <h1 class="titulo-principal">📝 Cadastro de Transportadoras e Motoristas</h1>
+      <form id="formCadastro">
+        
+        <!-- 🚛 Transportadora -->
+        <label for="transportadora">Nome da Transportadora:</label>
+        <input type="text" id="transportadora" name="transportadora" placeholder="Ex: TransBraspolpa" required />
+
+        <!-- 👨‍ Motorista -->
+        <label for="motorista">Nome do Motorista:</label>
+        <input type="text" id="motorista" name="motorista" placeholder="Ex: Gabriel Oliveira" required />
+
+        <label for="contato">Número para contato do Motorista:</label>
+        <input type="tel" id="contato" name="contato" placeholder="(19) 99566-3758" required />
+
+        <!-- 🔘 Botões -->
+        <div class="botoes-admin">
+          <button type="submit">💾 Salvar Cadastro</button>
+        </div>
+      </form>
+      <p id="mensagem"></p>
+    </div>
+
+    <!-- 📊 Tabela dinâmica de cadastros -->
+    <div class="tabela-cadastrados">
+      <h2>📋 Transportadoras e Motoristas Cadastrados</h2>
+      <div id="tabela-dinamica">
+        
+        <!-- Exemplo de tile de transportadora -->
+        <div class="tile-transportadora">
+          <h3>🚛 Transportadora: Amplitec</h3>
+          <div class="responsavel-header">
+            <p><strong>Responsável:</strong> <span id="resp-Amplitec">Leonardo</span></p>
+            <p><strong>Contato:</strong> <span id="contato-Amplitec">1923128371837</span></p>
+            <button type="button" onclick="editarResponsavel('Amplitec')">✏️ Editar</button>
+          </div>
+
+          <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Motorista</th>
+                <th>Contato Motorista</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Marciano Barbosa</td>
+                <td>1283912383</td>
+                <td>
+                  <button onclick="editarLinha(this, 0)">✏️ Editar</button>
+                  <button onclick="removerCadastro(0)">❌ Remover</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <button id="btnPDF">🖨️ Imprimir lista em PDF</button>
+    </div>
+  </main>
+
+  <!-- Bibliotecas jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="cadastro.js"></script>
+</body>
+</html>

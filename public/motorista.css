@@ -1,0 +1,205 @@
+/* ===========================
+   Reset básico
+   =========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===========================
+   Corpo da página
+   =========================== */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+/* ===========================
+   Área fixa no topo (cabeçalho)
+   =========================== */
+.painel-fixo {
+  position: sticky;   /* congela no topo */
+  top: 0;
+  background-color: #f4f4f4;
+  z-index: 100;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ===========================
+   Título do painel
+   =========================== */
+.titulo-motorista {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ff6b6b; /* vermelho vibrante */
+  text-shadow: 4px 4px 4px rgba(0,0,0,0.2);
+  text-align: center;
+  background-color: #f4f4f4;
+  border-radius: 30px;
+  padding: 10px;
+  z-index: 100;
+}
+
+/* ===========================
+   Container da tabela
+   =========================== */
+.tabela-container {
+  max-height: 600px;       /* altura máxima visível */
+  overflow-y: auto;        /* só as linhas rolam */
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* ===========================
+   Cabeçalho fixo da tabela
+   =========================== */
+#tabela-motorista thead th {
+  position: sticky;
+  top: 0;              /* fixa no topo do container */
+  background-color: #ff6b6b;
+  color: white;
+  font-weight: bold;
+  z-index: 99;
+}
+
+/* ===========================
+   Tabela geral
+   =========================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ccc;
+  text-align: center;
+  vertical-align: middle;
+}
+
+th {
+  background-color: #ff6b6b;
+  color: white;
+  font-weight: bold;
+}
+
+/* ===========================
+   Estilos por status da carga
+   =========================== */
+
+/* ✅ Linha verde para carga confirmada (saiu/OK) */
+tr.saida-realizada {
+  background-color: #d4edda !important; /* verde suave */
+}
+tr.saida-realizada td {
+  color: #155724; /* texto verde escuro */
+  font-weight: bold;
+}
+
+/* ❌ Linha vermelha para carga que pulou a vez */
+tr.pulou-vez {
+  background-color: #f8d7da !important; /* vermelho suave */
+}
+tr.pulou-vez td {
+  color: #721c24; /* texto vermelho escuro */
+  font-weight: bold;
+}
+
+/* ✳️ Linha amarela com animação para carga atual */
+tr.carga-atual {
+  background-color: #fff9c4 !important; /* amarelo vivo */
+  font-weight: bold;
+  position: relative;
+  animation: pulseHighlight 1.8s infinite ease-in-out;
+}
+tr.carga-atual td {
+  color: #5d4037; /* texto escuro para contraste */
+}
+
+/* 🔧 Animação pulsante suave para carga atual */
+@keyframes pulseHighlight {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 16px rgba(255, 193, 7, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+  }
+}
+
+/* ===========================
+   Alertas de agendamento
+   =========================== */
+.alerta-carretas {
+  display: flex;
+  flex-wrap: wrap;   /* permite quebrar em várias linhas */
+  gap: 8px;          /* espaço entre os pills */
+  justify-content: center;
+  margin: 10px 20px;
+}
+
+.alerta-carreta-item {
+  background-color: #fffbe6;
+  border: 1px solid #ffc107;
+  border-radius: 20px;   /* formato pill */
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;   /* evita quebra dentro do pill */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ===========================
+   Responsividade (mobile)
+   =========================== */
+@media screen and (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+
+  .painel-fixo {
+    padding-top: 6px;
+  }
+
+  .titulo-motorista {
+    font-size: 1.5rem;
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .tabela-container {
+    max-height: 500px;
+    overflow-x: auto;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  table {
+    font-size: 0.8rem;
+    min-width: 600px; /* garante rolagem horizontal */
+  }
+
+  th, td {
+    font-size: 0.75rem;
+    padding: 6px;
+  }
+
+  .alerta-carretas {
+    gap: 6px;
+    margin: 8px 10px;
+  }
+
+  .alerta-carreta-item {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+}
