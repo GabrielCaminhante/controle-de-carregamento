@@ -1,0 +1,16 @@
+{
+  "name": "painel-cargas",
+  "version": "1.0.0",
+  "description": "Sistema de controle de cargas e agendamento com painel do motorista",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.2",
+    "socket.io": "^4.8.1"
+  }
+}
+

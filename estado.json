@@ -1,0 +1,93 @@
+{
+  "transportadoras": [
+    {
+      "transportadora": "Amplitec",
+      "motorista": "Gabriel",
+      "contato": "31238138231",
+      "responsavel": "dasdasd",
+      "contatoResponsavel": "asdasd"
+    }
+  ],
+  "cargas": [
+    {
+      "transportadora": "Amplitec"
+    },
+    {
+      "transportadora": ""
+    },
+    {
+      "transportadora": ""
+    }
+  ],
+  "agendamento": [
+    {
+      "transportadora": "Amplitec",
+      "dias": [
+        "",
+        "17:58",
+        "",
+        "",
+        "18:04",
+        "21:38",
+        ""
+      ],
+      "status": [
+        "não confirmado",
+        "não confirmado",
+        "não confirmado",
+        "não confirmado",
+        "confirmado",
+        "não confirmado",
+        "não confirmado"
+      ]
+    },
+    {
+      "transportadora": "Amplitec",
+      "dias": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "22:03",
+        ""
+      ],
+      "status": [
+        "não confirmado",
+        "não confirmado",
+        "não confirmado",
+        "não confirmado",
+        "não confirmado",
+        "confirmado",
+        "não confirmado"
+      ]
+    }
+  ],
+  "controle": [
+    {
+      "numero": 1,
+      "transportadora": "Amplitec",
+      "nome": "Gabriel",
+      "horario": "",
+      "data": "",
+      "status": ""
+    },
+    {
+      "numero": 2,
+      "transportadora": "Amplitec",
+      "nome": "",
+      "horario": "",
+      "data": "",
+      "status": ""
+    },
+    {
+      "numero": 3,
+      "transportadora": "Amplitec",
+      "nome": "",
+      "horario": "",
+      "data": "",
+      "status": ""
+    }
+  ],
+  "marcadorAtual": 1
+}
