@@ -71,12 +71,6 @@ app.put("/cadastro/:id", async (req, res) => {
   res.json({ message: "Cadastro atualizado com sucesso!" });
 });
 
-  const result = await pool.query("SELECT * FROM transportadoras");
-  io.emit("estadoAtualizado", { transportadoras: result.rows });
-
-  res.json({ message: "Cadastro atualizado com sucesso!" });
-});
-
 app.delete("/cadastro/:id", async (req, res) => {
   const { id } = req.params;
   await pool.query("DELETE FROM transportadoras WHERE id=$1", [id]);
@@ -146,4 +140,3 @@ io.on("connection", async (socket) => {
 server.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
-
