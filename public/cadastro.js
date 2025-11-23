@@ -270,7 +270,7 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
       const head = [["Responsável", "Contatos Resp.", "Motoristas", "Contatos Motoristas"]];
       const body = cadastrosOrdenados.map(item => [
         item.responsavel || "",
-        item.contatoResponsavel || "",
+        item.contato_responsavel || "",
         item.motorista || "",
         item.contato || ""
       ]);
@@ -330,4 +330,5 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
+
 
