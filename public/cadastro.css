@@ -212,11 +212,12 @@ body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-/* 👤 Cabeçalho do responsável */
+/* 👤 Cabeçalho do responsável em uma linha */
 .responsavel-header {
   display: flex;
-  flex-direction: column; /* mantém o empilhamento */
-  gap: 8px;
+  justify-content: space-between; /* distribui os itens */
+  align-items: center;            /* alinha verticalmente */
+  gap: 12px;
   background-color: #fdf2f2;
   border: 1px solid #ff6b6b;
   border-radius: 6px;
@@ -224,10 +225,7 @@ body {
   margin-bottom: 12px;
 }
 
-/* Cada linha (Responsável / Contato) */
 .responsavel-header p {
-  display: flex;
-  justify-content: space-between; /* nome à esquerda, valor à direita */
   margin: 0;
   font-size: 0.9rem;
   color: #333;
@@ -237,12 +235,7 @@ body {
   color: #ff6b6b;
 }
 
-/* Botão Editar centralizado abaixo */
-.responsavel-header .acoes-responsavel {
-  text-align: center;
-}
-
-.responsavel-header .acoes-responsavel button {
+.responsavel-header button {
   padding: 6px 10px;
   background-color: #ff6b6b;
   color: #fff;
@@ -254,7 +247,7 @@ body {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.responsavel-header .acoes-responsavel button:hover {
+.responsavel-header button:hover {
   background-color: #e04646;
   transform: scale(1.05);
 }
@@ -354,5 +347,6 @@ body {
     padding: 5px;
   }
 }
+
 
 
