@@ -261,7 +261,9 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
       }
 
       doc.setFontSize(13);
+      doc.setTextColor(...corCabecalho); // aplica a mesma cor do cabeçalho
       doc.text(`Transportadora: ${transportadora}`, pageWidth / 2, startY, { align: "center" });
+      doc.setTextColor(0, 0, 0); // volta para preto para o restante do texto
 
       const cadastrosOrdenados = grupos[transportadora].sort((a, b) =>
         (a.motorista || "").localeCompare(b.motorista || "", "pt-BR")
@@ -330,5 +332,6 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
+
 
 
