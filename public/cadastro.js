@@ -329,9 +329,48 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
   }
 });
 
+  document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("loginModal");
+  const closeBtn = document.querySelector(".close");
+  const btnLoginModal = document.getElementById("btnLoginModal");
+  const loginMsgModal = document.getElementById("login-msg-modal");
+
+  // senha fixa (pode vir do backend depois)
+  const SENHA_CORRETA = "braspolpa123";
+
+  // quando clicar no botão de cadastro do admin, abre modal
+  document.querySelector(".botoes-admin button").addEventListener("click", (e) => {
+    e.preventDefault(); // evita envio imediato
+    modal.style.display = "block";
+  });
+
+  // fechar modal
+  closeBtn.onclick = () => modal.style.display = "none";
+  window.onclick = (event) => {
+    if (event.target === modal) modal.style.display = "none";
+  };
+
+  // validar login
+  btnLoginModal.addEventListener("click", () => {
+    const senhaDigitada = document.getElementById("senhaModal").value.trim();
+    if (senhaDigitada === SENHA_CORRETA) {
+      loginMsgModal.textContent = "Acesso liberado!";
+      loginMsgModal.style.color = "green";
+      modal.style.display = "none";
+      // aqui você pode chamar a função de salvar cadastro
+      document.getElementById("formCadastro").submit();
+    } else {
+      loginMsgModal.textContent = "Senha incorreta!";
+      loginMsgModal.style.color = "red";
+    }
+  });
+});
+
+
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
+
 
 
 
