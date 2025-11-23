@@ -226,61 +226,92 @@ body {
   transform: scale(1.05);
 }
 
-/* 📱 Layout exclusivo para celulares */
+/* 📱 Layout otimizado para celulares */
 @media (max-width: 600px) {
-  /* Esconde tabela tradicional */
-  .tabela-cadastrados table {
-    display: none;
+  body {
+    padding: 8px; /* 🔧 menos margem lateral */
   }
 
-  /* Cards de cadastro */
-  .card-cadastro {
-    background-color: #fff;
-    border: 1px solid #ff6b6b;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  .titulo-principal {
+    font-size: 1.1rem; /* 🔧 título menor */
+    margin-bottom: 10px;
   }
 
-  .card-cadastro h3 {
-    font-size: 1rem;
-    color: #ff6b6b;
-    margin-bottom: 8px;
-  }
-
-  .card-cadastro p {
-    margin: 4px 0;
-    font-size: 0.9rem;
-    color: #333;
-  }
-
-  .card-cadastro strong {
-    color: #ff6b6b;
-  }
-
-  /* Botões dentro do card */
-  .acoes-card {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-  }
-
-  .acoes-card button {
-    flex: 1;
-    padding: 8px;
-    font-size: 0.8rem;
-    background-color: #ff6b6b;
-    color: #fff;
-    border: none;
+  .painel-cadastro,
+  .tabela-cadastrados {
+    padding: 12px; /* 🔧 painel mais compacto */
+    max-width: 100%;
     border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
   }
 
-  .acoes-card button:hover {
-    background-color: #e04646;
+  .painel-cadastro h2,
+  .tabela-cadastrados h2,
+  .tabela-cadastrados h3 {
+    font-size: 0.95rem; /* 🔧 títulos internos menores */
+    margin: 8px 0;
+  }
+
+  .painel-cadastro input[type="text"],
+  .painel-cadastro input[type="tel"] {
+    font-size: 0.85rem;
+    padding: 6px;
+    min-height: 32px; /* 🔧 altura menor */
+  }
+
+  .botoes-admin {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .botoes-admin button {
+    width: 100%;
+    font-size: 0.8rem;
+    padding: 7px;
+    min-width: auto;
+  }
+
+  #btnPDF {
+    width: 100%;
+    margin-top: 12px;
+    font-size: 0.85rem;
+    padding: 7px;
+  }
+
+  /* 📊 Tabelas */
+  .tabela-cadastrados {
+    overflow-x: auto; /* 🔧 rolagem horizontal */
+  }
+
+  .tabela-cadastrados table {
+    font-size: 0.8rem;
+    min-width: 480px; /* 🔧 largura mínima ajustada */
+  }
+
+  .tabela-cadastrados th,
+  .tabela-cadastrados td {
+    padding: 5px;
+  }
+
+  .tabela-cadastrados td.acoes button {
+    padding: 4px 6px;
+    font-size: 0.7rem;
+  }
+
+  /* 👤 Responsável */
+  .responsavel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .responsavel-header p {
+    font-size: 0.85rem;
+  }
+
+  .responsavel-header button {
+    width: auto; /* 🔧 botão compacto */
+    font-size: 0.75rem;
+    padding: 5px 8px;
   }
 }
-
