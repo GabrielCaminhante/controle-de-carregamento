@@ -127,6 +127,7 @@ body {
 /* 🧾 Tabelas */
 .tabela-cadastrados {
   overflow-x: auto; /* 🔧 permite rolagem horizontal em telas pequenas */
+  -webkit-overflow-scrolling: touch; /* 🔧 rolagem suave em iOS */
 }
 
 .tabela-cadastrados table {
@@ -156,6 +157,20 @@ body {
 
 .tabela-cadastrados tbody tr:nth-child(even) {
   background-color: #fdf2f2;
+}
+
+/* 📊 Coluna de ações */
+.tabela-cadastrados td.acoes,
+.tabela-cadastrados th.acoes {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.tabela-cadastrados td.acoes button {
+  display: inline-block;
+  margin: 2px;
+  padding: 5px 8px;
+  font-size: 0.75rem;
 }
 
 /* 📌 Tile da transportadora */
@@ -193,14 +208,14 @@ body {
 
 /* 🔘 Botão editar/salvar do responsável */
 .responsavel-header button {
-  align-self: stretch;
+  align-self: flex-start;   /* 🔧 botão só ocupa o espaço necessário */
   text-align: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background-color: #ff6b6b;
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
@@ -268,9 +283,9 @@ body {
     padding: 6px;
   }
 
-  .tabela-cadastrados button {
-    font-size: 0.75rem;
-    padding: 5px 8px;
+  .tabela-cadastrados td.acoes button {
+    padding: 4px 6px;
+    font-size: 0.7rem;
   }
 
   .responsavel-header {
@@ -280,7 +295,7 @@ body {
   }
 
   .responsavel-header button {
-    width: 100%;
+    width: auto; /* 🔧 botão ocupa apenas o espaço necessário */
     text-align: center;
   }
 }
