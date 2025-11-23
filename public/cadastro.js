@@ -4,74 +4,73 @@ document.addEventListener("DOMContentLoaded", () => {
   const mensagem = document.getElementById("mensagem");
   const tabela = document.getElementById("tabela-dinamica");
 
-  // 🔧 Agora aponta para o backend no Render
   const API_URL = "https://controle-de-carregamento.onrender.com";
 
   // 🔄 Carregar cadastros agrupados e ordenados
   async function carregarCadastros() {
-  try {
-    const resposta = await fetch("/cadastros");
-    const cadastros = await resposta.json();
+    try {
+      const resposta = await fetch(`${API_URL}/cadastros`);
+      const cadastros = await resposta.json();
 
-    const tabela = document.getElementById("tabela-dinamica");
-    let html = "";
+      let html = "";
 
-    if (cadastros.length > 0) {
-      // Ordena cadastros por transportadora
-      const cadastrosOrdenados = cadastros.sort((a, b) =>
-        a.transportadora.localeCompare(b.transportadora)
-      );
+      if (cadastros.length > 0) {
+        // Ordena cadastros por transportadora
+        const cadastrosOrdenados = cadastros.sort((a, b) =>
+          a.transportadora.localeCompare(b.transportadora)
+        );
 
-      const transportadora = cadastrosOrdenados[0].transportadora;
-      const primeiroCadastro = cadastrosOrdenados[0] || {};
+        const transportadora = cadastrosOrdenados[0].transportadora;
+        const primeiroCadastro = cadastrosOrdenados[0] || {};
 
-      html += `
-        <div class="tile-transportadora">
-          <h3>🚛 Transportadora: ${transportadora}</h3>
-          <div class="responsavel-header">
-            <p><strong>Responsável:</strong> 
-              <span id="resp-${primeiroCadastro.id}">${primeiroCadastro.responsavel || ""}</span>
-            </p>
-            <p><strong>Contato:</strong> 
-              <span id="contato-${primeiroCadastro.id}">${primeiroCadastro.contato_responsavel || ""}</span>
-            </p>
-            <div class="acoes-responsavel">
-              <button type="button" onclick="editarResponsavel(${primeiroCadastro.id})">✏️ Editar</button>
-            </div>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Motoristas</th>
-                <th>Contatos Motoristas</th>
-                <th class="acoes">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      cadastrosOrdenados.forEach((item) => {
         html += `
-          <tr>
-            <td>${item.motorista}</td>
-            <td>${item.contato}</td>
-            <td class="acoes">
-              <button onclick="editarLinha(this, ${item.id})">✏️ Editar</button>
-              <button onclick="removerCadastro(${item.id})">❌ Remover</button>
-            </td>
-          </tr>
+          <div class="tile-transportadora">
+            <h3>🚛 Transportadora: ${transportadora}</h3>
+            <div class="responsavel-header">
+              <p><strong>Responsável:</strong> 
+                <span id="resp-${primeiroCadastro.id}">${primeiroCadastro.responsavel || ""}</span>
+              </p>
+              <p><strong>Contato:</strong> 
+                <span id="contato-${primeiroCadastro.id}">${primeiroCadastro.contatoResponsavel || ""}</span>
+              </p>
+              <div class="acoes-responsavel">
+                <button type="button" onclick="editarResponsavel(${primeiroCadastro.id})">✏️ Editar</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Motoristas</th>
+                  <th>Contatos Motoristas</th>
+                  <th class="acoes">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
         `;
-      });
 
-      html += "</tbody></table></div>";
+        cadastrosOrdenados.forEach((item) => {
+          html += `
+            <tr>
+              <td>${item.motorista}</td>
+              <td>${item.contato}</td>
+              <td class="acoes">
+                <button onclick="editarLinha(this, ${item.id})">✏️ Editar</button>
+                <button onclick="removerCadastro(${item.id})">❌ Remover</button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += "</tbody></table></div>";
+      }
+
+      tabela.innerHTML = html;
+    } catch (error) {
+      console.error("Erro ao carregar cadastros:", error);
+      tabela.innerHTML = "<p style='color:red'>Erro ao carregar cadastros.</p>";
     }
-
-    tabela.innerHTML = html;
-  } catch (error) {
-    console.error("Erro ao carregar cadastros:", error);
-    tabela.innerHTML = "<p style='color:red'>Erro ao carregar cadastros.</p>";
   }
-}
+
   // 📩 Envio do formulário
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -80,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
       transportadora: document.getElementById("transportadora").value.trim(),
       motorista: document.getElementById("motorista").value.trim(),
       contato: document.getElementById("contato").value.trim(),
-      responsavel: "",          // inicia vazio
-      contatoResponsavel: ""    // inicia vazio
+      responsavel: "",
+      contatoResponsavel: ""
     };
 
     try {
@@ -161,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mensagem.style.color = "red";
     }
   };
+
   // 📌 Função editar responsável/contato
   window.editarResponsavel = (id) => {
     const spanResp = document.getElementById(`resp-${id}`);
@@ -168,16 +168,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const botao = spanResp.closest('.responsavel-header').querySelector('button');
 
     if (botao.textContent.includes("Editar")) {
-      // transforma em inputs
       spanResp.innerHTML = `<input type="text" id="inputResp-${id}" value="${spanResp.textContent}" />`;
       spanContato.innerHTML = `<input type="text" id="inputContato-${id}" value="${spanContato.textContent}" />`;
       botao.textContent = "💾 Salvar";
     } else {
-      // pega valores dos inputs
       const novoResp = document.getElementById(`inputResp-${id}`).value.trim();
       const novoContato = document.getElementById(`inputContato-${id}`).value.trim();
 
-      // envia para servidor (rota PUT /cadastro/:id)
       fetch(`${API_URL}/cadastro/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -197,23 +194,13 @@ document.addEventListener("DOMContentLoaded", () => {
         mensagem.style.color = "red";
       });
 
-      // volta para texto
       spanResp.textContent = novoResp;
       spanContato.textContent = novoContato;
       botao.textContent = "✏️ Editar";
     }
   };
-  // cadastro.js
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("formCadastro");
-  const mensagem = document.getElementById("mensagem");
-  const tabela = document.getElementById("tabela-dinamica");
 
-  const API_URL = "https://controle-de-carregamento.onrender.com";
-
-  // ... todas as funções já existentes (carregarCadastros, editarLinha, removerCadastro, etc.)
-
-  // 📌 Função para gerar PDF (exposta no window)
+  // 📌 Função para gerar PDF
   window.gerarPDFCargas = async () => {
     try {
       const response = await fetch(`${API_URL}/cadastros`);
@@ -282,8 +269,27 @@ document.addEventListener("DOMContentLoaded", () => {
           head,
           body,
           startY: startY + 12,
-          styles: { fontSize: 9, halign: "center", valign: "middle" },
-          headStyles: { fillColor: corCabecalho, textColor: 255, fontStyle: "bold" },
+          styles: { 
+            fontSize: 9,
+            cellPadding: 1.5,
+            halign: "center",
+            valign: "middle",
+            lineHeight: 1.0,
+            textColor: [0, 0, 0],
+            lineColor: [200, 200, 200],
+            lineWidth: 0.5
+          },
+          headStyles: { 
+            fillColor: corCabecalho,
+            textColor: 255,
+            fontStyle: "bold",
+            halign: "center",
+            lineColor: [150, 150, 150],
+            lineWidth: 0.5
+          },
+          bodyStyles: {
+            halign: "center"
+          },
           alternateRowStyles: { fillColor: [245, 245, 245] },
           margin: { left: 40, right: 40 },
           tableWidth: "auto",
@@ -292,6 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         startY = doc.lastAutoTable.finalY + 24;
 
+        // rodapé na última página
         if (idx === transportadorasOrdenadas.length - 1) {
           const pageHeight = doc.internal.pageSize.getHeight();
           doc.setFontSize(9);
@@ -299,6 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+      // salva o PDF
       doc.save("cadastros.pdf");
     } catch (err) {
       console.error("Erro ao gerar PDF:", err);
@@ -309,4 +317,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
+
+
 
