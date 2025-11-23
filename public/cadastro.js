@@ -9,81 +9,69 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 🔄 Carregar cadastros agrupados e ordenados
   async function carregarCadastros() {
-    try {
-      const response = await fetch(`${API_URL}/cadastros`);
-      const data = await response.json();
+  try {
+    const resposta = await fetch("/cadastros");
+    const cadastros = await resposta.json();
 
-      if (!data || data.length === 0) {
-        tabela.innerHTML = "<p>Nenhum cadastro realizado ainda.</p>";
-        return;
-      }
+    const tabela = document.getElementById("tabela-dinamica");
+    let html = "";
 
-      // Agrupar por transportadora
-      const grupos = {};
-      data.forEach((item) => {
-        if (!grupos[item.transportadora]) {
-          grupos[item.transportadora] = [];
-        }
-        grupos[item.transportadora].push(item); // usa o id do banco
-      });
-
-      // Ordenar transportadoras alfabeticamente
-      const transportadorasOrdenadas = Object.keys(grupos).sort((a, b) =>
-        a.localeCompare(b, "pt-BR")
+    if (cadastros.length > 0) {
+      // Ordena cadastros por transportadora
+      const cadastrosOrdenados = cadastros.sort((a, b) =>
+        a.transportadora.localeCompare(b.transportadora)
       );
 
-      // Montar HTML
-      let html = "";
-      for (const transportadora of transportadorasOrdenadas) {
-        const cadastrosOrdenados = grupos[transportadora].sort((a, b) =>
-          a.motorista.localeCompare(b.motorista, "pt-BR")
-        );
+      const transportadora = cadastrosOrdenados[0].transportadora;
+      const primeiroCadastro = cadastrosOrdenados[0] || {};
 
-        // Pega o primeiro cadastro para mostrar responsável
-        const primeiroCadastro = cadastrosOrdenados[0] || {};
-
-        html += `
-          <div class="tile-transportadora">
-            <h3>🚛 Transportadora: ${transportadora}</h3>
-            <div class="responsavel-header">
-              <p><strong>Responsável:</strong> <span id="resp-${primeiroCadastro.id}">${primeiroCadastro.responsavel || ""}</span></p>
-              <p><strong>Contato:</strong> <span id="contato-${primeiroCadastro.id}">${primeiroCadastro.contato_responsavel || ""}</span></p>
+      html += `
+        <div class="tile-transportadora">
+          <h3>🚛 Transportadora: ${transportadora}</h3>
+          <div class="responsavel-header">
+            <p><strong>Responsável:</strong> 
+              <span id="resp-${primeiroCadastro.id}">${primeiroCadastro.responsavel || ""}</span>
+            </p>
+            <p><strong>Contato:</strong> 
+              <span id="contato-${primeiroCadastro.id}">${primeiroCadastro.contato_responsavel || ""}</span>
+            </p>
+            <div class="acoes-responsavel">
               <button type="button" onclick="editarResponsavel(${primeiroCadastro.id})">✏️ Editar</button>
             </div>
-            <table border="1" cellpadding="5" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Motoristas</th>
-                  <th>Contatos Motoristas</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Motoristas</th>
+                <th>Contatos Motoristas</th>
+                <th class="acoes">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      cadastrosOrdenados.forEach((item) => {
+        html += `
+          <tr>
+            <td>${item.motorista}</td>
+            <td>${item.contato}</td>
+            <td class="acoes">
+              <button onclick="editarLinha(this, ${item.id})">✏️ Editar</button>
+              <button onclick="removerCadastro(${item.id})">❌ Remover</button>
+            </td>
+          </tr>
         `;
+      });
 
-        cadastrosOrdenados.forEach((item) => {
-          html += `
-            <tr>
-              <td>${item.motorista}</td>
-              <td>${item.contato}</td>
-              <td>
-                <button onclick="editarLinha(this, ${item.id})">✏️ Editar</button>
-                <button onclick="removerCadastro(${item.id})">❌ Remover</button>
-              </td>
-            </tr>
-          `;
-        });
-
-        html += "</tbody></table></div>";
-      }
-
-      tabela.innerHTML = html;
-    } catch (error) {
-      console.error("Erro ao carregar cadastros:", error);
-      tabela.innerHTML = "<p style='color:red'>Erro ao carregar cadastros.</p>";
+      html += "</tbody></table></div>";
     }
-  }
 
+    tabela.innerHTML = html;
+  } catch (error) {
+    console.error("Erro ao carregar cadastros:", error);
+    tabela.innerHTML = "<p style='color:red'>Erro ao carregar cadastros.</p>";
+  }
+}
   // 📩 Envio do formulário
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -219,3 +207,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
+
