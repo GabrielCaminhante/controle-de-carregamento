@@ -7,7 +7,7 @@ body {
   margin: 0;
 }
 
-/* 🏷️ Título principal dentro do painel */
+/* 🏷️ Título principal */
 .titulo-principal {
   font-size: 1.4rem;
   font-weight: 700;
@@ -16,7 +16,7 @@ body {
   margin-bottom: 15px;
 }
 
-/* 🎯 Painéis (cadastro e tabela) */
+/* 🎯 Painéis */
 .painel-cadastro,
 .tabela-cadastrados {
   background-color: #fff;
@@ -87,7 +87,7 @@ body {
   transform: scale(1.05);
 }
 
-/* 🔘 Botão de imprimir abaixo da tabela */
+/* 🔘 Botão imprimir */
 #btnPDF {
   display: block;
   margin: 20px auto 0 auto;
@@ -106,7 +106,7 @@ body {
   background-color: #e04646;
 }
 
-/* 🗑️ Botões dentro da tabela (Editar, Remover, Salvar) */
+/* 🗑️ Botões dentro da tabela */
 .tabela-cadastrados button {
   padding: 6px 10px;
   background-color: #ff6b6b;
@@ -126,8 +126,8 @@ body {
 
 /* 🧾 Tabelas */
 .tabela-cadastrados {
-  overflow-x: auto; /* 🔧 permite rolagem horizontal em telas pequenas */
-  -webkit-overflow-scrolling: touch; /* 🔧 rolagem suave em iOS */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabela-cadastrados table {
@@ -135,7 +135,7 @@ body {
   border-collapse: collapse;
   font-size: 0.9rem;
   margin-top: 10px;
-  min-width: 600px; /* 🔧 largura mínima para não quebrar colunas */
+  min-width: 600px; /* desktop */
 }
 
 .tabela-cadastrados th {
@@ -144,7 +144,7 @@ body {
   font-weight: 700;
   padding: 10px;
   text-align: center;
-  white-space: nowrap; /* 🔧 evita quebra de texto */
+  white-space: nowrap;
 }
 
 .tabela-cadastrados td {
@@ -152,7 +152,7 @@ body {
   padding: 8px;
   text-align: center;
   line-height: 1.4;
-  white-space: nowrap; /* 🔧 evita quebra de texto */
+  white-space: nowrap;
 }
 
 .tabela-cadastrados tbody tr:nth-child(even) {
@@ -186,7 +186,7 @@ body {
 /* 👤 Cabeçalho do responsável */
 .responsavel-header {
   display: flex;
-  flex-direction: column;   /* 🔧 empilha os elementos */
+  flex-direction: column;
   align-items: flex-start;
   gap: 8px;
   background-color: #fdf2f2;
@@ -206,9 +206,8 @@ body {
   color: #ff6b6b;
 }
 
-/* 🔘 Botão editar/salvar do responsável */
 .responsavel-header button {
-  align-self: flex-start;   /* 🔧 botão só ocupa o espaço necessário */
+  align-self: flex-start;
   text-align: center;
   padding: 6px 10px;
   background-color: #ff6b6b;
@@ -226,78 +225,61 @@ body {
   transform: scale(1.05);
 }
 
-/* 📱 Ajuste para celulares */
+/* 📱 Responsividade geral */
 @media (max-width: 600px) {
-  .tabela-cadastrados table {
-    font-size: 0.8rem;
-    min-width: 80%;   /* 🔧 tabela se adapta à tela */
+  body {
+    padding: 10px;
   }
-
-  .tabela-cadastrados th,
-  .tabela-cadastrados td {
-    padding: 6px;
-    white-space: normal; /* 🔧 permite quebra de texto */
-  }
-}
 
   .titulo-principal {
-    font-size: 1.1rem; /* 🔧 título menor */
-    margin-bottom: 10px;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
   }
 
   .painel-cadastro,
   .tabela-cadastrados {
-    padding: 12px; /* 🔧 painel mais compacto */
+    padding: 15px;
     max-width: 100%;
-    border-radius: 6px;
   }
 
   .painel-cadastro h2,
   .tabela-cadastrados h2,
   .tabela-cadastrados h3 {
-    font-size: 0.95rem; /* 🔧 títulos internos menores */
-    margin: 8px 0;
+    font-size: 1rem;
   }
 
   .painel-cadastro input[type="text"],
   .painel-cadastro input[type="tel"] {
     font-size: 0.85rem;
-    padding: 6px;
-    min-height: 32px; /* 🔧 altura menor */
+    padding: 7px;
+    min-height: 34px;
   }
 
   .botoes-admin {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 
   .botoes-admin button {
     width: 100%;
-    font-size: 0.8rem;
-    padding: 7px;
+    font-size: 0.85rem;
+    padding: 8px;
     min-width: auto;
   }
 
   #btnPDF {
     width: 100%;
-    margin-top: 12px;
-    font-size: 0.85rem;
-    padding: 7px;
-  }
-
-  /* 📊 Tabelas */
-  .tabela-cadastrados {
-    overflow-x: auto; /* 🔧 rolagem horizontal */
+    margin-top: 15px;
   }
 
   .tabela-cadastrados table {
     font-size: 0.8rem;
-    min-width: 480px; /* 🔧 largura mínima ajustada */
+    min-width: 500px; /* celular landscape */
   }
 
   .tabela-cadastrados th,
   .tabela-cadastrados td {
-    padding: 5px;
+    padding: 6px;
   }
 
   .tabela-cadastrados td.acoes button {
@@ -305,22 +287,36 @@ body {
     font-size: 0.7rem;
   }
 
-  /* 👤 Responsável */
   .responsavel-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    padding: 8px;
-  }
-
-  .responsavel-header p {
-    font-size: 0.85rem;
+    gap: 8px;
   }
 
   .responsavel-header button {
-    width: auto; /* 🔧 botão compacto */
-    font-size: 0.75rem;
-    padding: 5px 8px;
+    width: auto;
+    text-align: center;
   }
 }
 
+/* 📱 Ajuste extra para celular em pé (portrait muito estreito) */
+@media (max-width: 420px) {
+  .tabela-cadastrados table {
+    min-width: 100%;   /* tabela ocupa toda a largura */
+    font-size: 0.75rem;
+  }
+
+  .tabela-cadastrados th,
+  .tabela-cadastrados td {
+    padding: 4px;
+    white-space: normal; /* permite quebra de texto */
+  }
+
+  .tabela-cadastrados td.acoes button {
+    display: block;      /* empilha os botões em vez de lado a lado */
+    width: 100%;         /* cada botão ocupa a largura da célula */
+    margin: 3px 0;
+    font-size: 0.7rem;
+    padding: 5px;
+  }
+}
