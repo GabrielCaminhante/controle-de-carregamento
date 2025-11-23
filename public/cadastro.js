@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // 📌 Gerar PDF agrupado e ordenado
+ // 📌 Gerar PDF agrupado e ordenado
 document.getElementById("btnPDF").addEventListener("click", async () => {
   try {
     const response = await fetch(`${API_URL}/cadastros`);
@@ -260,10 +260,14 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
         startY = 60;
       }
 
+      // cor dinâmica para cada transportadora
+      const corCabecalho = cores[idx % cores.length];
+
+      // título da transportadora na mesma cor do cabeçalho
       doc.setFontSize(13);
-      doc.setTextColor(...corCabecalho); // aplica a mesma cor do cabeçalho
+      doc.setTextColor(...corCabecalho);
       doc.text(`Transportadora: ${transportadora}`, pageWidth / 2, startY, { align: "center" });
-      doc.setTextColor(0, 0, 0); // volta para preto para o restante do texto
+      doc.setTextColor(0, 0, 0); // volta para preto para o restante
 
       const cadastrosOrdenados = grupos[transportadora].sort((a, b) =>
         (a.motorista || "").localeCompare(b.motorista || "", "pt-BR")
@@ -276,9 +280,6 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
         item.motorista || "",
         item.contato || ""
       ]);
-
-      // cor dinâmica para cada transportadora
-      const corCabecalho = cores[idx % cores.length];
 
       doc.autoTable({
         head,
@@ -328,10 +329,10 @@ document.getElementById("btnPDF").addEventListener("click", async () => {
   }
 });
 
-
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
+
 
 
 
