@@ -125,11 +125,16 @@ body {
 }
 
 /* 🧾 Tabelas */
+.tabela-cadastrados {
+  overflow-x: auto; /* 🔧 permite rolagem horizontal em telas pequenas */
+}
+
 .tabela-cadastrados table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
   margin-top: 10px;
+  min-width: 600px; /* 🔧 largura mínima para não quebrar colunas */
 }
 
 .tabela-cadastrados th {
@@ -138,6 +143,7 @@ body {
   font-weight: 700;
   padding: 10px;
   text-align: center;
+  white-space: nowrap; /* 🔧 evita quebra de texto */
 }
 
 .tabela-cadastrados td {
@@ -145,6 +151,7 @@ body {
   padding: 8px;
   text-align: center;
   line-height: 1.4;
+  white-space: nowrap; /* 🔧 evita quebra de texto */
 }
 
 .tabela-cadastrados tbody tr:nth-child(even) {
@@ -165,8 +172,8 @@ body {
 .responsavel-header {
   display: flex;
   flex-direction: column;   /* 🔧 empilha os elementos */
-  align-items: flex-start;  /* 🔧 alinha à esquerda */
-  gap: 8px;                 /* 🔧 espaço entre linhas */
+  align-items: flex-start;
+  gap: 8px;
   background-color: #fdf2f2;
   border: 1px solid #ff6b6b;
   border-radius: 6px;
@@ -186,7 +193,7 @@ body {
 
 /* 🔘 Botão editar/salvar do responsável */
 .responsavel-header button {
-  align-self: stretch;      /* botão ocupa toda a largura */
+  align-self: stretch;
   text-align: center;
   padding: 8px 12px;
   background-color: #ff6b6b;
@@ -253,7 +260,7 @@ body {
 
   .tabela-cadastrados table {
     font-size: 0.8rem;
-    min-width: 600px; /* permite rolagem horizontal */
+    min-width: 500px; /* 🔧 reduz largura mínima em telas menores */
   }
 
   .tabela-cadastrados th,
