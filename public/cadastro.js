@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mensagem = document.getElementById("mensagem");
   const tabela = document.getElementById("tabela-dinamica");
 
+  // 🔧 Backend no Render
   const API_URL = "https://controle-de-carregamento.onrender.com";
 
   // 🔄 Carregar cadastros agrupados e ordenados
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span id="resp-${primeiroCadastro.id}">${primeiroCadastro.responsavel || ""}</span>
               </p>
               <p><strong>Contato:</strong> 
-                <span id="contato-${primeiroCadastro.id}">${primeiroCadastro.contatoResponsavel || ""}</span>
+                <span id="contato-${primeiroCadastro.id}">${primeiroCadastro.contato_responsavel || ""}</span>
               </p>
               <div class="acoes-responsavel">
                 <button type="button" onclick="editarResponsavel(${primeiroCadastro.id})">✏️ Editar</button>
@@ -79,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
       transportadora: document.getElementById("transportadora").value.trim(),
       motorista: document.getElementById("motorista").value.trim(),
       contato: document.getElementById("contato").value.trim(),
-      responsavel: "",
-      contatoResponsavel: ""
+      responsavel: "",          // inicia vazio
+      contatoResponsavel: ""    // inicia vazio
     };
 
     try {
@@ -168,13 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const botao = spanResp.closest('.responsavel-header').querySelector('button');
 
     if (botao.textContent.includes("Editar")) {
+      // transforma em inputs
       spanResp.innerHTML = `<input type="text" id="inputResp-${id}" value="${spanResp.textContent}" />`;
       spanContato.innerHTML = `<input type="text" id="inputContato-${id}" value="${spanContato.textContent}" />`;
       botao.textContent = "💾 Salvar";
     } else {
+      // pega valores dos inputs
       const novoResp = document.getElementById(`inputResp-${id}`).value.trim();
       const novoContato = document.getElementById(`inputContato-${id}`).value.trim();
 
+      // envia para servidor
       fetch(`${API_URL}/cadastro/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -194,129 +198,13 @@ document.addEventListener("DOMContentLoaded", () => {
         mensagem.style.color = "red";
       });
 
+      // volta para texto
       spanResp.textContent = novoResp;
       spanContato.textContent = novoContato;
       botao.textContent = "✏️ Editar";
     }
   };
 
-  // 📌 Função para gerar PDF
-  window.gerarPDFCargas = async () => {
-    try {
-      const response = await fetch(`${API_URL}/cadastros`);
-      const data = await response.json();
-
-      if (!data || data.length === 0) {
-        alert("Nenhum cadastro para imprimir.");
-        return;
-      }
-
-      // Agrupar por transportadora
-      const grupos = {};
-      data.forEach(item => {
-        const t = (item.transportadora || "").trim();
-        if (!grupos[t]) grupos[t] = [];
-        grupos[t].push(item);
-      });
-
-      // Ordenar transportadoras
-      const transportadorasOrdenadas = Object.keys(grupos).sort((a, b) =>
-        a.localeCompare(b, "pt-BR")
-      );
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit: "pt", format: "a4" });
-
-      const pageWidth = doc.internal.pageSize.getWidth();
-      doc.setFontSize(16);
-      doc.text("Lista de contatos para carregamento de Braspolpa", pageWidth / 2, 50, { align: "center" });
-
-      let startY = 80;
-
-      const cores = [
-        [41, 128, 185],   // Azul
-        [39, 174, 96],    // Verde
-        [192, 57, 43],    // Vermelho
-        [243, 156, 18],   // Laranja
-        [142, 68, 173],   // Roxo
-        [44, 62, 80]      // Cinza escuro
-      ];
-
-      transportadorasOrdenadas.forEach((transportadora, idx) => {
-        if (startY > doc.internal.pageSize.getHeight() - 120) {
-          doc.addPage();
-          startY = 60;
-        }
-
-        doc.setFontSize(13);
-        doc.text(`Transportadora: ${transportadora}`, pageWidth / 2, startY, { align: "center" });
-
-        const cadastrosOrdenados = grupos[transportadora].sort((a, b) =>
-          (a.motorista || "").localeCompare(b.motorista || "", "pt-BR")
-        );
-
-        const head = [["Responsável", "Contatos Resp.", "Motoristas", "Contatos Motoristas"]];
-        const body = cadastrosOrdenados.map(item => [
-          item.responsavel || "",
-          item.contatoResponsavel || "",
-          item.motorista || "",
-          item.contato || ""
-        ]);
-
-        const corCabecalho = cores[idx % cores.length];
-
-        doc.autoTable({
-          head,
-          body,
-          startY: startY + 12,
-          styles: { 
-            fontSize: 9,
-            cellPadding: 1.5,
-            halign: "center",
-            valign: "middle",
-            lineHeight: 1.0,
-            textColor: [0, 0, 0],
-            lineColor: [200, 200, 200],
-            lineWidth: 0.5
-          },
-          headStyles: { 
-            fillColor: corCabecalho,
-            textColor: 255,
-            fontStyle: "bold",
-            halign: "center",
-            lineColor: [150, 150, 150],
-            lineWidth: 0.5
-          },
-          bodyStyles: {
-            halign: "center"
-          },
-          alternateRowStyles: { fillColor: [245, 245, 245] },
-          margin: { left: 40, right: 40 },
-          tableWidth: "auto",
-          theme: "grid"
-        });
-
-        startY = doc.lastAutoTable.finalY + 24;
-
-        // rodapé na última página
-        if (idx === transportadorasOrdenadas.length - 1) {
-          const pageHeight = doc.internal.pageSize.getHeight();
-          doc.setFontSize(9);
-          doc.text("Gerado automaticamente pelo sistema de cadastro", 40, pageHeight - 30);
-        }
-      });
-
-      // salva o PDF
-      doc.save("cadastros.pdf");
-    } catch (err) {
-      console.error("Erro ao gerar PDF:", err);
-      alert("Erro ao gerar PDF.");
-    }
-  };
-
   // 🔄 Carregar cadastros ao iniciar
   carregarCadastros();
 });
-
-
-
