@@ -13,7 +13,7 @@ body {
   font-weight: 700;
   color: #ff6b6b;
   text-align: center;
-  margin-bottom: 15px; /* 🔧 menos espaço */
+  margin-bottom: 15px;
 }
 
 /* 🎯 Painéis (cadastro e tabela) */
@@ -22,10 +22,10 @@ body {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 20px; /* 🔧 mais compacto */
+  padding: 20px;
   margin: 0 auto 25px auto;
   width: 100%;
-  max-width: 900px; /* largura unificada */
+  max-width: 900px;
   border: 1px solid #ff6b6b;
   box-sizing: border-box;
 }
@@ -36,15 +36,15 @@ body {
 .tabela-cadastrados h3 {
   color: #ff6b6b;
   font-size: 1.1rem;
-  margin: 10px 0 8px; /* 🔧 menos espaço */
+  margin: 10px 0 8px;
   font-weight: 600;
-  text-align: center; /* 🔧 centralizado */
+  text-align: center;
 }
 
 /* 🧾 Labels e campos */
 .painel-cadastro label {
   display: block;
-  margin-bottom: 3px; /* 🔧 menos espaço */
+  margin-bottom: 3px;
   font-weight: 600;
   color: #333;
 }
@@ -52,34 +52,34 @@ body {
 .painel-cadastro input[type="text"],
 .painel-cadastro input[type="tel"] {
   width: 100%;
-  padding: 8px;              /* 🔧 altura menor */
+  padding: 8px;
   font-size: 0.9rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  margin-bottom: 10px;       /* 🔧 menos espaço entre campos */
+  margin-bottom: 10px;
   box-sizing: border-box;
-  min-height: 36px;          /* 🔧 altura mínima compacta */
+  min-height: 36px;
 }
 
 /* 🔘 Botões principais */
 .botoes-admin {
   display: flex;
   justify-content: center;
-  gap: 12px; /* 🔧 menos espaço entre botões */
-  margin-top: 12px; /* 🔧 menos espaço acima */
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .botoes-admin button {
-  padding: 8px 14px; /* 🔧 botão menor */
+  padding: 8px 14px;
   background-color: #ff6b6b;
   color: #fff;
   border: none;
   border-radius: 6px;
   font-weight: 600;
-  font-size: 0.85rem; /* 🔧 texto menor */
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  min-width: 120px; /* 🔧 largura menor */
+  min-width: 120px;
 }
 
 .botoes-admin button:hover {
@@ -90,7 +90,7 @@ body {
 /* 🔘 Botão de imprimir abaixo da tabela */
 #btnPDF {
   display: block;
-  margin: 20px auto 0 auto; /* 🔧 espaçamento acima e centralizado */
+  margin: 20px auto 0 auto;
   padding: 8px 14px;
   background-color: #ff6b6b;
   color: #fff;
@@ -108,12 +108,12 @@ body {
 
 /* 🗑️ Botões dentro da tabela (Editar, Remover, Salvar) */
 .tabela-cadastrados button {
-  padding: 6px 10px; /* 🔧 menor altura/largura */
+  padding: 6px 10px;
   background-color: #ff6b6b;
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 0.8rem; /* 🔧 texto menor */
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   margin: 2px;
@@ -129,7 +129,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  margin-top: 10px; /* 🔧 menos espaço */
+  margin-top: 10px;
 }
 
 .tabela-cadastrados th {
@@ -164,8 +164,9 @@ body {
 /* 👤 Cabeçalho do responsável */
 .responsavel-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;   /* 🔧 empilha os elementos */
+  align-items: flex-start;  /* 🔧 alinha à esquerda */
+  gap: 8px;                 /* 🔧 espaço entre linhas */
   background-color: #fdf2f2;
   border: 1px solid #ff6b6b;
   border-radius: 6px;
@@ -174,7 +175,7 @@ body {
 }
 
 .responsavel-header p {
-  margin: 0 10px 0 0;
+  margin: 0;
   font-size: 0.9rem;
   color: #333;
 }
@@ -185,7 +186,9 @@ body {
 
 /* 🔘 Botão editar/salvar do responsável */
 .responsavel-header button {
-  padding: 6px 12px;
+  align-self: stretch;      /* botão ocupa toda a largura */
+  text-align: center;
+  padding: 8px 12px;
   background-color: #ff6b6b;
   color: #fff;
   border: none;
