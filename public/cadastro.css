@@ -226,11 +226,19 @@ body {
   transform: scale(1.05);
 }
 
-/* 📱 Layout otimizado para celulares */
+/* 📱 Ajuste para celulares */
 @media (max-width: 600px) {
-  body {
-    padding: 8px; /* 🔧 menos margem lateral */
+  .tabela-cadastrados table {
+    font-size: 0.8rem;
+    min-width: 80%;   /* 🔧 tabela se adapta à tela */
   }
+
+  .tabela-cadastrados th,
+  .tabela-cadastrados td {
+    padding: 6px;
+    white-space: normal; /* 🔧 permite quebra de texto */
+  }
+}
 
   .titulo-principal {
     font-size: 1.1rem; /* 🔧 título menor */
@@ -315,3 +323,4 @@ body {
     padding: 5px 8px;
   }
 }
+
