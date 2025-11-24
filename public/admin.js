@@ -327,3 +327,4 @@ document.addEventListener("DOMContentLoaded", () => {
   carregarInicial().then(() => bindBotoes());
 });
 
+
