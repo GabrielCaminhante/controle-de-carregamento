@@ -9,6 +9,11 @@ const { Pool } = require("pg");
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 
+// ✅ Teste das variáveis de ambiente
+console.log("DATABASE_URL:", process.env.DATABASE_URL ? "OK" : "NÃO DEFINIDO");
+console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "OK" : "NÃO DEFINIDO");
+console.log("ADMIN_PASSWORD_HASH:", process.env.ADMIN_PASSWORD_HASH ? "OK" : "NÃO DEFINIDO");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
