@@ -1,9 +1,12 @@
-// Conexão com Socket.IO (opcional, só se seu servidor emitir eventos)
-const socket = io("http://localhost:3000");
+// ========= CONFIGURAÇÃO DE BASE =========
+const BASE_URL = window.location.origin;
 
-// Endpoints do servidor
-const ENDPOINT_TRANSPORTADORAS = "http://localhost:3000/cadastros"; // GET: lista transportadoras
-const ENDPOINT_PAINEL = "http://localhost:3000/painel";             // GET/POST: cargas, agendamento, controle
+// Conexão com Socket.IO (usa mesma origem automaticamente)
+const socket = io(BASE_URL);
+
+// Endpoints do servidor (dinâmicos: local ou produção)
+const ENDPOINT_TRANSPORTADORAS = `${BASE_URL}/cadastros`; 
+const ENDPOINT_PAINEL = `${BASE_URL}/painel`;
 
 // Estado local
 let linhasCargas = [];
@@ -17,13 +20,13 @@ const porLote = 38;
 async function carregarInicial() {
   try {
     // 1) Transportadoras cadastradas (somente leitura)
-    const resT = await fetch(ENDPOINT_TRANSPORTADORAS);
+    const resT = await fetch(ENDPOINT_TRANSPORTADORAS, { credentials: "include" });
     if (!resT.ok) throw new Error("Falha ao carregar transportadoras");
     const transportadoras = await resT.json();
     listaTransportadoras = transportadoras.map(t => t.transportadora).filter(Boolean);
 
     // 2) Painel (cargas, agendamento, controle)
-    const resP = await fetch(ENDPOINT_PAINEL);
+    const resP = await fetch(ENDPOINT_PAINEL, { credentials: "include" });
     if (!resP.ok) throw new Error("Falha ao carregar painel");
     const painel = await resP.json();
 
@@ -38,7 +41,6 @@ async function carregarInicial() {
     console.log("✅ Painel e transportadoras carregados.");
   } catch (err) {
     console.error("⚠ Erro no carregamento inicial:", err);
-    // Feedback visual mínimo
     const grid = document.getElementById("gridCargas");
     if (grid) grid.innerHTML = '<p style="text-align:center; font-weight:bold; color:#555;">servidor offline.</p>';
     const tbody = document.querySelector("#tabela-semanal tbody");
@@ -61,7 +63,8 @@ function salvarPainel() {
   fetch(ENDPOINT_PAINEL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    credentials: "include"
   })
     .then(res => {
       if (!res.ok) throw new Error("Falha ao salvar painel");
@@ -70,9 +73,8 @@ function salvarPainel() {
     .catch(err => console.error("⚠ Erro ao salvar painel:", err));
 }
 
-// ========= SOCKET.IO (se houver emissão no servidor) =========
+// ========= SOCKET.IO =========
 socket.on("estadoAtualizado", (painel) => {
-  // Atualiza apenas blocos do painel e a lista de transportadoras se vier junto
   if (Array.isArray(painel.transportadoras)) {
     listaTransportadoras = painel.transportadoras.map(t => t.transportadora).filter(Boolean);
     atualizarListaTransportadoras();
@@ -92,14 +94,13 @@ function renderTabelaCargas() {
   grid.innerHTML = "";
 
   if (!linhasCargas || linhasCargas.length === 0) {
-  grid.innerHTML = '<p style="text-align:center; font-weight:bold; color:#555;">Nenhuma carga cadastrada.</p>';
-  return;
-}
+    grid.innerHTML = '<p style="text-align:center; font-weight:bold; color:#555;">Nenhuma carga cadastrada.</p>';
+    return;
+  }
 
   const total = linhasCargas.length;
   const numLotes = Math.ceil(total / porLote);
 
-  // Duas colunas visuais se quiser
   const colunas = [document.createElement("div"), document.createElement("div")];
   colunas.forEach(col => {
     col.classList.add("linha-lotes");
@@ -121,7 +122,6 @@ function renderTabelaCargas() {
     for (let i = l * porLote; i < Math.min((l + 1) * porLote, total); i++) {
       const tr = document.createElement("tr");
 
-      // Nº (somente leitura)
       const tdNum = document.createElement("td");
       const inputNum = document.createElement("input");
       inputNum.type = "number";
@@ -130,7 +130,6 @@ function renderTabelaCargas() {
       tdNum.appendChild(inputNum);
       tr.appendChild(tdNum);
 
-      // Transportadora (input com datalist de nomes oficiais)
       const tdTransp = document.createElement("td");
       const inputTransp = document.createElement("input");
       inputTransp.type = "text";
@@ -149,14 +148,12 @@ function renderTabelaCargas() {
     tabela.appendChild(tbody);
     bloco.appendChild(tabela);
 
-    // Alterna a coluna visual
     const alvoColuna = l < 3 ? colunas[0] : colunas[1];
     alvoColuna.appendChild(bloco);
   }
 }
 
 // ========= RENDERIZAÇÃO: AGENDAMENTO =========
-// Mapeamento entre índice da tabela (Segunda→Domingo) e índice real do JS (0=Dom, 1=Seg, ..., 6=Sáb)
 const MAPA_TABELA_PARA_GETDAY = [1, 2, 3, 4, 5, 6, 0];
 
 function renderTabelaAgendamento() {
@@ -175,7 +172,6 @@ function renderTabelaAgendamento() {
   linhasAgendamento.forEach((linha, index) => {
     const tr = document.createElement("tr");
 
-    // Transportadora
     const tdTransp = document.createElement("td");
     const inputTransp = document.createElement("input");
     inputTransp.type = "text";
@@ -188,15 +184,12 @@ function renderTabelaAgendamento() {
     tdTransp.appendChild(inputTransp);
     tr.appendChild(tdTransp);
 
-    // 7 dias (Segunda → Domingo)
     for (let diaIndex = 0; diaIndex < 7; diaIndex++) {
       const tdDia = document.createElement("td");
       const inputHora = document.createElement("input");
       inputHora.type = "time";
 
-      // Usa o mapa para alinhar com getDay()
       const diaBackend = MAPA_TABELA_PARA_GETDAY[diaIndex];
-
       inputHora.value = (linha.dias && linha.dias[diaBackend]) ? linha.dias[diaBackend] : "";
 
       inputHora.oninput = () => {
@@ -215,8 +208,7 @@ function renderTabelaAgendamento() {
   });
 }
 
-
-// ========= LISTA DE TRANSPORTADORAS (datalist) =========
+// ========= LISTA DE TRANSPORTADORAS =========
 function atualizarListaTransportadoras() {
   const datalist = document.getElementById("lista-transportadoras");
   if (!datalist) return;
@@ -287,19 +279,16 @@ function bindBotoes() {
   }
 }
 
-
+// ========= ABERTURA DE PAINÉIS =========
 function abrirPainelMotorista() {
-  // Abre ou foca a aba chamada "painelMotorista"
   window.open("motorista.html", "painelMotorista");
 }
 
 function abrirPainelCadastro() {
-  // Abre ou foca a aba chamada "painelCadastro"
   window.open("cadastro.html", "painelCadastro");
 }
 
 function abrirPainelControle() {
-  // Abre ou foca a aba chamada "painelControleDeCargas"
   window.open("controle.html", "painelControle");
 }
 
@@ -307,12 +296,13 @@ function abrirPainelControle() {
 let janelaCadastro = null;
 
 function abrirCadastro() {
-  // se já existe e não foi fechada
   if (janelaCadastro && !janelaCadastro.closed) {
-    janelaCadastro.focus(); // apenas traz para frente
+    janelaCadastro.focus();
     alert("⚠ A página de cadastro já está aberta.");
     return;
   }
+  janelaCadastro = window.open("cadastro.html", "painelCadastro");
+}
 
 // ligar ao botão existente
 document.addEventListener("DOMContentLoaded", () => {
@@ -326,5 +316,3 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   carregarInicial().then(() => bindBotoes());
 });
-
-
