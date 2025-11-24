@@ -14,32 +14,6 @@ h1, h2, h3 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra suave */
   font-weight: 800;
 }
-/* tela de login para cadastro*/
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-  background: #fff;
-  margin: 15% auto;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.close {
-  float: right;
-  font-size: 1.4rem;
-  cursor: pointer;
-}
 
 /* 🏷️ Título decorativo principal */
 .titulo-principal {
@@ -253,7 +227,7 @@ h1, h2, h3 {
   padding: 10px 0;
   max-width: 100%;
   white-space: nowrap;         /* Impede quebra de linha */
-   z-index: 1000; /* garante que fique acima de outros elementos */
+  z-index: 1000; /* garante que fique acima de outros elementos */
 }
 
 .botoes-admin-panel button {
@@ -294,16 +268,6 @@ h1, h2, h3 {
   text-shadow: 2px 2px 6px rgba(0,0,0,0.2);
 }
 
-#estatisticas-cargas p {
-  font-size: 1rem;
-  margin: 8px 0;
-}
-
-#por-transportadora p {
-  margin: 4px 0;
-}
-
-
 /* 📱 Responsividade para telas menores */
 @media (max-width: 600px) {
   body {
@@ -341,7 +305,6 @@ h1, h2, h3 {
     font-size: 0.8rem;
   }
 
-
   .painel-estatisticas {
     padding: 15px;
     margin: 20px auto;
@@ -372,6 +335,3 @@ h1, h2, h3 {
     padding: 4px;
   }
 }
-
-
-

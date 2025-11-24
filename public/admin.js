@@ -314,44 +314,6 @@ function abrirCadastro() {
     return;
   }
 
-  // 👉 abrir modal de login em vez de abrir direto
-  const modal = document.getElementById("loginModal");
-  const closeBtn = document.querySelector(".close");
-  const btnLoginModal = document.getElementById("btnLoginModal");
-  const loginMsgModal = document.getElementById("login-msg-modal");
-
-  const SENHA_CORRETA = "braspolpa123"; // senha fixa
-
-  modal.style.display = "block";
-
-  // fechar modal
-  closeBtn.onclick = () => modal.style.display = "none";
-  window.onclick = (event) => {
-    if (event.target === modal) modal.style.display = "none";
-  };
-
-  // validar login
-  btnLoginModal.onclick = () => {
-    const senhaDigitada = document.getElementById("senhaModal").value.trim();
-    if (senhaDigitada === SENHA_CORRETA) {
-      loginMsgModal.textContent = "Acesso liberado!";
-      loginMsgModal.style.color = "green";
-      setTimeout(() => {
-        modal.style.display = "none";
-        // 👉 abre a janela de cadastro só se senha correta
-        janelaCadastro = window.open(
-          "cadastro.html",       // URL da página
-          "CadastroMotorista",   // nome único da janela
-          "width=800,height=600" // opções de tamanho
-        );
-      }, 800);
-    } else {
-      loginMsgModal.textContent = "Senha incorreta!";
-      loginMsgModal.style.color = "red";
-    }
-  };
-}
-
 // ligar ao botão existente
 document.addEventListener("DOMContentLoaded", () => {
   const btnCadastro = document.getElementById("btnCadastro");

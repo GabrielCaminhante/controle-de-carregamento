@@ -1,75 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel do Administrador</title>
-  <link rel="stylesheet" href="admin.css" />
+  <meta charset="UTF-8">
+  <title>Login - Controle de Carregamento</title>
+  <link rel="stylesheet" href="login.css">
 </head>
 <body>
-  <header>
-    <h1>Painel do Administrador</h1>
-  </header>
-
-  <nav class="painel-administrador" role="toolbar">
-    <div class="botoes-admin-panel">
-      <button id="btnCadastro" class="botao-final">📝 Cadastrar</button>
-      <button id="btnControleCargas" onclick="abrirPainelControle()">📦 Controle de Cargas</button>
-      <button id="btnPainelMotorista" onclick="abrirPainelMotorista()">🚚 Painel do Motorista</button>
-      <button id="btnAdicionarLinha">➕ Linha</button>
-      <input type="number" id="quantidade-linhas" placeholder="Qtd de linhas" min="1" style="width: 100px;">
-      <button id="btnRemoverLinha">➖ Linha</button>
-    </div>
-  </nav>
-
-  <!-- 📦 Tabela de Cargas -->
-  <section aria-label="Tabela de Cargas">
-    <div id="gridCargas"></div>
-  </section>
-
-  <!-- 📅 Tabela de Agendamento Semanal -->
-  <section class="tabela-agendamento" aria-label="Agendamento Semanal">
-    <h1>Agendamento Semanal</h1>
-    <div class="botoes-admin">
-      <button id="btnAdicionarAgendamento">➕ Linha</button>
-      <button id="btnRemoverAgendamento">➖ Linha</button>
-    </div>
-    <table id="tabela-semanal">
-      <thead>
-        <tr>
-          <th scope="col">Transportadora</th>
-          <th scope="col">Segunda</th>
-          <th scope="col">Terça</th>
-          <th scope="col">Quarta</th>
-          <th scope="col">Quinta</th>
-          <th scope="col">Sexta</th>
-          <th scope="col">Sábado</th>
-          <th scope="col">Domingo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- preenchido dinamicamente pelo JS -->
-      </tbody>
-    </table>
-  </section>
-
-  <!-- ✅ Preenchimento automático -->
-  <datalist id="lista-transportadoras"></datalist>
-
-  <!-- 🔒 Modal de Login -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>🔑 Acesso Restrito</h2>
-      <label for="senhaModal">Digite a senha:</label>
-      <input type="password" id="senhaModal" placeholder="Senha de acesso" />
-      <button id="btnLoginModal">Entrar</button>
-      <p id="login-msg-modal"></p>
-    </div>
+  <div class="login-container">
+    <h2>Login do Administrador</h2>
+    <form id="loginForm">
+      <div class="input-group">
+        <input type="password" id="senha" placeholder="Digite sua senha" required>
+        <span id="toggleSenha" class="toggle-icon">👁️</span>
+      </div>
+      <button type="submit">Entrar</button>
+      <p id="mensagem"></p>
+    </form>
   </div>
 
-  <!-- ✅ Socket.IO e Admin.js -->
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-  <script src="admin.js"></script>
+  <script src="login.js"></script>
 </body>
 </html>
