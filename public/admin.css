@@ -14,32 +14,6 @@ h1, h2, h3 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra suave */
   font-weight: 800;
 }
-/* tela de login para cadastro*/
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-  background: #fff;
-  margin: 15% auto;
-  padding: 20px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.close {
-  float: right;
-  font-size: 1.4rem;
-  cursor: pointer;
-}
 
 /* 🏷️ Título decorativo principal */
 .titulo-principal {
@@ -372,6 +346,7 @@ h1, h2, h3 {
     padding: 4px;
   }
 }
+
 
 
 
