@@ -1,8 +1,13 @@
+// Carrega variáveis do arquivo .env
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 const { Pool } = require("pg");
+const session = require("express-session");
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,9 +22,50 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("public"));
 
+// 🔧 Configuração de sessão
+app.use(session({
+  secret: process.env.SESSION_SECRET || "chave-secreta",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // se usar HTTPS pode ser true
+}));
+
+// 🔧 Middleware de autenticação
+function autenticar(req, res, next) {
+  if (req.session && req.session.usuario) {
+    return next();
+  } else {
+    return res.status(401).json({ message: "Acesso negado. Faça login." });
+  }
+}
+
+/* ---------------- ROTAS DE LOGIN ---------------- */
+app.post("/login", async (req, res) => {
+  const { senha } = req.body;
+  const hashSalvo = process.env.ADMIN_PASSWORD_HASH;
+
+  if (!hashSalvo) {
+    return res.status(500).json({ message: "Senha não configurada no servidor." });
+  }
+
+  const valido = await bcrypt.compare(senha, hashSalvo);
+  if (valido) {
+    req.session.usuario = "admin";
+    res.json({ message: "Login realizado com sucesso!" });
+  } else {
+    res.status(401).json({ message: "Senha incorreta." });
+  }
+});
+
+app.post("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({ message: "Logout realizado." });
+  });
+});
+
 /* ---------------- ROTAS DE CADASTRO ---------------- */
 
-app.post("/cadastro", async (req, res) => {
+app.post("/cadastro", autenticar, async (req, res) => {
   const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
   if (!transportadora || !motorista || !contato) {
@@ -38,12 +84,12 @@ app.post("/cadastro", async (req, res) => {
   res.json({ message: "Cadastro salvo com sucesso!" });
 });
 
-app.get("/cadastros", async (req, res) => {
+app.get("/cadastros", autenticar, async (req, res) => {
   const result = await pool.query("SELECT * FROM transportadoras");
   res.json(result.rows);
 });
 
-app.put("/cadastro/:id", async (req, res) => {
+app.put("/cadastro/:id", autenticar, async (req, res) => {
   const { id } = req.params;
   const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
@@ -71,7 +117,7 @@ app.put("/cadastro/:id", async (req, res) => {
   res.json({ message: "Cadastro atualizado com sucesso!" });
 });
 
-app.delete("/cadastro/:id", async (req, res) => {
+app.delete("/cadastro/:id", autenticar, async (req, res) => {
   const { id } = req.params;
   await pool.query("DELETE FROM transportadoras WHERE id=$1", [id]);
 
@@ -83,7 +129,7 @@ app.delete("/cadastro/:id", async (req, res) => {
 
 /* ---------------- ROTAS DE AGENDAMENTO ---------------- */
 
-app.post("/agendamento", async (req, res) => {
+app.post("/agendamento", autenticar, async (req, res) => {
   const { transportadora, dias } = req.body;
 
   if (!transportadora || !Array.isArray(dias) || dias.length !== 7) {
@@ -102,7 +148,7 @@ app.post("/agendamento", async (req, res) => {
   res.json({ message: "Agendamento criado com sucesso!" });
 });
 
-app.get("/agendamentos", async (req, res) => {
+app.get("/agendamentos", autenticar, async (req, res) => {
   const result = await pool.query("SELECT * FROM agendamentos");
   res.json(result.rows);
 });
