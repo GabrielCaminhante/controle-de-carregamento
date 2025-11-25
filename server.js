@@ -52,21 +52,46 @@ function autenticar(req, res, next) {
   }
 }
 
+// 🔧 Middleware para restringir admin
+function autenticarAdmin(req, res, next) {
+  if (req.session?.usuario?.role === "admin") {
+    return next();
+  } else {
+    return res.status(403).json({ message: "Acesso restrito ao administrador." });
+  }
+}
+
 /* ---------------- ROTAS DE LOGIN ---------------- */
 app.post("/login", async (req, res) => {
-  const { senha } = req.body;
-  const hashSalvo = process.env.ADMIN_PASSWORD_HASH;
+  const { username, password, role } = req.body;
 
-  if (!hashSalvo) {
-    return res.status(500).json({ message: "Senha não configurada no servidor." });
-  }
+  try {
+    // busca usuário no banco
+    const result = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+    const user = result.rows[0];
 
-  const valido = await bcrypt.compare(senha, hashSalvo);
-  if (valido) {
-    req.session.usuario = "admin";
+    if (!user) {
+      return res.status(401).json({ message: "Usuário não encontrado." });
+    }
+
+    // confere role
+    if (user.role !== role) {
+      return res.status(401).json({ message: "Tipo de login inválido para este usuário." });
+    }
+
+    // compara senha com hash
+    const valido = await bcrypt.compare(password, user.password);
+    if (!valido) {
+      return res.status(401).json({ message: "Senha incorreta." });
+    }
+
+    // salva sessão
+    req.session.usuario = { id: user.id, username: user.username, role: user.role };
     res.json({ message: "Login realizado com sucesso!" });
-  } else {
-    res.status(401).json({ message: "Senha incorreta." });
+
+  } catch (err) {
+    console.error("Erro no login:", err);
+    res.status(500).json({ message: "Erro interno no servidor." });
   }
 });
 
@@ -77,7 +102,7 @@ app.post("/logout", (req, res) => {
 });
 
 /* ---------------- ROTAS DE CADASTRO ---------------- */
-app.post("/cadastro", autenticar, async (req, res) => {
+app.post("/cadastro", autenticarAdmin, async (req, res) => {
   const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
   if (!transportadora || !motorista || !contato) {
@@ -101,7 +126,7 @@ app.get("/cadastros", autenticar, async (req, res) => {
   res.json(result.rows);
 });
 
-app.put("/cadastro/:id", autenticar, async (req, res) => {
+app.put("/cadastro/:id", autenticarAdmin, async (req, res) => {
   const { id } = req.params;
   const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
@@ -129,7 +154,7 @@ app.put("/cadastro/:id", autenticar, async (req, res) => {
   res.json({ message: "Cadastro atualizado com sucesso!" });
 });
 
-app.delete("/cadastro/:id", autenticar, async (req, res) => {
+app.delete("/cadastro/:id", autenticarAdmin, async (req, res) => {
   const { id } = req.params;
   await pool.query("DELETE FROM transportadoras WHERE id=$1", [id]);
 

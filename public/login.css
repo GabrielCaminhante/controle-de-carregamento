@@ -1,12 +1,12 @@
 /* 🌐 Fundo geral */
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #ff6b6b, #28a745); /* cores padrão admin */
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0;
+  transition: background 0.5s ease;
 }
 
 /* 📦 Container central */
@@ -16,28 +16,32 @@ body {
   border-radius: 12px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.25);
   width: 90%;
-  max-width: 360px; /* ajustado para caber bem no painel */
+  max-width: 360px;
   text-align: center;
 }
 
 /* 🎯 Título */
 .login-container h2 {
   margin-bottom: 20px;
-  color: #ff6b6b; /* cor de destaque admin */
   font-weight: 800;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
-/* 🔑 Campo de senha */
+/* Diferentes cores por tipo */
+.admin-title { color: #ff6b6b; }
+.user-title { color: #007bff; }
+.motorista-title { color: #ff9800; }
+
+/* 🔑 Campos de entrada */
 .input-group {
   position: relative;
   width: 100%;
 }
 
-#senha {
+.input-group input,
+.input-group select {
   width: 100%;
   padding: 12px;
-  padding-right: 40px; /* espaço para o ícone */
   margin: 12px 0;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -60,7 +64,7 @@ body {
 button {
   width: 100%;
   padding: 12px;
-  background: #28a745; /* verde padrão admin */
+  background: #28a745;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -71,7 +75,7 @@ button {
 }
 
 button:hover {
-  background: #e46d6d; /* vermelho hover padrão admin */
+  background: #e46d6d;
 }
 
 /* 📢 Mensagem */
@@ -88,7 +92,8 @@ button:hover {
     padding: 20px;
   }
 
-  #senha {
+  .input-group input,
+  .input-group select {
     font-size: 14px;
     padding: 10px;
   }
@@ -99,21 +104,6 @@ button:hover {
   }
 
   .toggle-icon {
-    font-size: 16px;
-  }
-}
-
-/* 📱 Landscape (celular deitado) */
-@media (orientation: landscape) and (max-width: 900px) {
-  .login-container {
-    max-width: 500px; /* aumenta largura quando deitado */
-  }
-
-  #senha {
-    font-size: 16px;
-  }
-
-  button {
     font-size: 16px;
   }
 }

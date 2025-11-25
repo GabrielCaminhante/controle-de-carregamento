@@ -7,11 +7,21 @@
 </head>
 <body>
   <div class="login-container">
-    <h2>Login do Administrador</h2>
+    <h2 id="loginTitle">Login</h2>
     <form id="loginForm">
       <div class="input-group">
-        <input type="password" id="senha" placeholder="Digite sua senha" required>
+        <input type="text" id="username" placeholder="Usuário" required>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Senha" required>
         <span id="toggleSenha" class="toggle-icon">👁️</span>
+      </div>
+      <div class="input-group">
+        <select id="role" required>
+          <option value="admin">Administrador</option>
+          <option value="user">Usuário</option>
+          <option value="motorista">Motorista</option>
+        </select>
       </div>
       <button type="submit">Entrar</button>
       <p id="mensagem"></p>
