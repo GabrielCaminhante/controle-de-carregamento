@@ -93,7 +93,7 @@ button:hover {
   }
 
   .login-container {
-    width: 95%;
+    width: 200%;
     padding: 20px;
     max-width: none;           /* remove limite fixo */
   }
