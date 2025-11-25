@@ -87,9 +87,19 @@ button:hover {
 
 /* 📱 Responsividade */
 @media (max-width: 600px) {
+  body {
+    align-items: flex-start;   /* sobe o painel para não ficar esmagado no meio */
+    padding-top: 20px;
+  }
+
   .login-container {
     width: 95%;
     padding: 20px;
+    max-width: none;           /* remove limite fixo */
+  }
+
+  .login-container h2 {
+    font-size: 1.2rem;         /* título menor */
   }
 
   .input-group input,
