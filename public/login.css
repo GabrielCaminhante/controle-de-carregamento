@@ -19,6 +19,118 @@ body {
   max-width: 360px;
   text-align: center;
 }
+/* 🌐 Fundo geral */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f0f2f5;
+}
+
+/* 📦 Container central */
+.login-container {
+  background: #fff;
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 🎯 Título */
+.login-container h2 {
+  margin-bottom: 20px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* 🔑 Campos de entrada */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* 👁️ Ícone de mostrar/ocultar senha */
+.toggle-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}
+
+/* 🔘 Botão */
+button {
+  width: 100%;
+  padding: 14px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #218838;
+}
+
+/* 📢 Mensagem */
+#mensagem {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 📱 Responsividade */
+@media (max-width: 480px) {
+  body {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: none;
+    height: 100vh; /* ocupa toda a altura da tela */
+    border-radius: 0; /* painel ocupa toda a largura */
+    justify-content: center;
+  }
+
+  .login-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .input-group input,
+  .input-group select,
+  button {
+    font-size: 1rem;
+    padding: 16px;
+  }
+}
 
 /* 🎯 Título */
 .login-container h2 {
