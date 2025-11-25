@@ -7,6 +7,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { Pool } = require("pg");
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcrypt");
 
 // ✅ Teste das variáveis de ambiente
@@ -27,12 +28,19 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("public"));
 
-// 🔧 Configuração de sessão
+// 🔧 Configuração de sessão com connect-pg-simple
 app.use(session({
+  store: new pgSession({
+    pool: pool,          // usa a mesma conexão do PostgreSQL
+    tableName: "session" // tabela onde as sessões serão salvas
+  }),
   secret: process.env.SESSION_SECRET || "chave-secreta",
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // se usar HTTPS pode ser true
+  cookie: {
+    secure: false, // em produção com HTTPS pode ser true
+    maxAge: 24 * 60 * 60 * 1000 // 1 dia
+  }
 }));
 
 // 🔧 Middleware de autenticação
@@ -69,7 +77,6 @@ app.post("/logout", (req, res) => {
 });
 
 /* ---------------- ROTAS DE CADASTRO ---------------- */
-
 app.post("/cadastro", autenticar, async (req, res) => {
   const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
@@ -133,7 +140,6 @@ app.delete("/cadastro/:id", autenticar, async (req, res) => {
 });
 
 /* ---------------- ROTAS DE AGENDAMENTO ---------------- */
-
 app.post("/agendamento", autenticar, async (req, res) => {
   const { transportadora, dias } = req.body;
 
@@ -159,14 +165,12 @@ app.get("/agendamentos", autenticar, async (req, res) => {
 });
 
 /* ---------------- SOCKET.IO ---------------- */
-
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 io.on("connection", async (socket) => {
   console.log("🔌 Cliente conectado");
 
-  // Envia estado inicial
   const transportadoras = await pool.query("SELECT * FROM transportadoras");
   const agendamentos = await pool.query("SELECT * FROM agendamentos");
 
@@ -175,7 +179,6 @@ io.on("connection", async (socket) => {
     agendamento: agendamentos.rows
   });
 
-  // Atualização via socket
   socket.on("atualizarPainel", async () => {
     const transportadoras = await pool.query("SELECT * FROM transportadoras");
     const agendamentos = await pool.query("SELECT * FROM agendamentos");
