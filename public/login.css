@@ -88,29 +88,25 @@ button:hover {
 /* 📱 Responsividade */
 @media (max-width: 480px) {
   body {
-    align-items: flex-start;   /* sobe o painel */
-    padding: 20px;
+    align-items: flex-start;
+    padding: 10px;
   }
 
   .login-container {
-    width: 100%;               /* ocupa toda a largura */
-    max-width: none;            /* remove limite fixo */
-    padding: 25px;              /* espaço interno confortável */
-    font-size: 1rem;            /* texto legível */
-  }
-
-  .login-container h2 {
-    font-size: 1.4rem;          /* título proporcional */
+    width: 100%;
+    max-width: none;
+    padding: 20px;
+    border-radius: 0;          /* painel ocupa toda a largura */
+    min-height: 100vh;         /* aproveita altura total */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   /* centraliza verticalmente */
   }
 
   .input-group input,
-  .input-group select {
-    font-size: 1rem;
-    padding: 12px;
-  }
-
+  .input-group select,
   button {
     font-size: 1rem;
-    padding: 12px;
+    padding: 14px;
   }
 }
