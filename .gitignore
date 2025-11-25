@@ -9,3 +9,6 @@ node_modules/
 
 # Arquivos temporários
 *.tmp
+
+# Scripts utilitários (não sobem para produção)
+create_users.js
