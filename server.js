@@ -68,7 +68,7 @@ function autenticar(req, res, next) {
   if (req.session && req.session.usuario) {
     return next();
   } else {
-    return res.status(401).json({ message: "Acesso negado. Faça login." });
+    return res.status(401).json({ message: "Acesso negado. Faça login." }); 
   }
 }
 
