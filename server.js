@@ -60,8 +60,38 @@ app.use((req, res, next) => {
   next(); // deixa passar quem está logado
 });
 
-// 🔧 Só depois libera arquivos estáticos
+// 🔧 Só depois libera arquivos estáticos (CSS, JS, imagens)
 app.use(express.static("public"));
+
+// 🔒 Rotas protegidas para HTMLs
+app.get("/cadastro.html", (req, res) => {
+  if (!req.session.usuario || req.session.usuario.role !== "admin") {
+    return res.redirect("/index.html");
+  }
+  res.sendFile(__dirname + "/public/cadastro.html");
+});
+
+app.get("/admin.html", (req, res) => {
+  if (!req.session.usuario || req.session.usuario.role !== "admin") {
+    return res.redirect("/index.html");
+  }
+  res.sendFile(__dirname + "/public/admin.html");
+});
+
+app.get("/motorista.html", (req, res) => {
+  if (!req.session.usuario || req.session.usuario.role !== "motorista") {
+    return res.redirect("/index.html");
+  }
+  res.sendFile(__dirname + "/public/motorista.html");
+});
+
+app.get("/controle.html", (req, res) => {
+  if (!req.session.usuario) {
+    return res.redirect("/index.html");
+  }
+  res.sendFile(__dirname + "/public/controle.html");
+});
+
 
 // 🔧 Middleware de autenticação
 function autenticar(req, res, next) {
