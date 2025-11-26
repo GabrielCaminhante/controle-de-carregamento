@@ -43,6 +43,27 @@ app.use(session({
   }
 }));
 
+// 🔒 Middleware global de proteção
+app.use((req, res, next) => {
+  if (
+    req.path === "/" ||
+    req.path === "/index.html" ||
+    req.path.startsWith("/login") ||
+    req.path.startsWith("/logout")
+  ) {
+    return next();
+  }
+
+  if (!req.session.usuario) {
+    return res.redirect("/index.html");
+  }
+
+  next();
+});
+
+// 🔧 Só depois libera arquivos estáticos
+app.use(express.static("public"));
+
 // 🔧 Middleware de autenticação
 function autenticar(req, res, next) {
   if (req.session && req.session.usuario) {
@@ -214,25 +235,6 @@ io.on("connection", async (socket) => {
     });
     console.log("📢 Painel atualizado via socket.io");
   });
-});
-
-/*-------impede acesso fora do login----*/
-app.use((req, res, next) => {
-  if (
-    req.path === "/" ||
-    req.path === "/index.html" ||
-    req.path.startsWith("/login") ||
-    req.path.startsWith("/logout") ||
-    req.path.startsWith("/public")
-  ) {
-    return next();
-  }
-
-  if (!req.session.usuario) {
-    return res.redirect("/index.html");
-  }
-
-  next();
 });
 
 server.listen(PORT, () => {
