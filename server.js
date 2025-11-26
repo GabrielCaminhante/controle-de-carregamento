@@ -216,6 +216,25 @@ io.on("connection", async (socket) => {
   });
 });
 
+/*-------impede acesso fora do login----*/
+app.use((req, res, next) => {
+  if (
+    req.path === "/" ||
+    req.path === "/index.html" ||
+    req.path.startsWith("/login") ||
+    req.path.startsWith("/logout") ||
+    req.path.startsWith("/public")
+  ) {
+    return next();
+  }
+
+  if (!req.session.usuario) {
+    return res.redirect("/index.html");
+  }
+
+  next();
+});
+
 server.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });

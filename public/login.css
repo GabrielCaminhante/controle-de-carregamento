@@ -86,7 +86,7 @@ button:hover {
 }
 
 /* 📱 Responsividade */
-@media (max-width: 600px) {
+@media (max-width: 240px) {
   .login-container {
     width: 95%;
     padding: 20px;
