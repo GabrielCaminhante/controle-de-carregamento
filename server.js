@@ -26,19 +26,18 @@ const pool = new Pool({
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static("public"));
 
-// 🔧 Configuração de sessão com connect-pg-simple
+// 🔧 Configuração de sessão
 app.use(session({
   store: new pgSession({
-    pool: pool,          // usa a mesma conexão do PostgreSQL
-    tableName: "session" // tabela onde as sessões serão salvas
+    pool: pool,
+    tableName: "session"
   }),
   secret: process.env.SESSION_SECRET || "chave-secreta",
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // em produção com HTTPS pode ser true
+    secure: false,
     maxAge: 24 * 60 * 60 * 1000 // 1 dia
   }
 }));
@@ -51,14 +50,14 @@ app.use((req, res, next) => {
     req.path.startsWith("/login") ||
     req.path.startsWith("/logout")
   ) {
-    return next();
+    return next(); // libera login, logout e index
   }
 
   if (!req.session.usuario) {
-    return res.redirect("/index.html");
+    return res.redirect("/index.html"); // bloqueia quem não tem sessão
   }
 
-  next();
+  next(); // deixa passar quem está logado
 });
 
 // 🔧 Só depois libera arquivos estáticos
