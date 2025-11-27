@@ -63,26 +63,37 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         }
       }, 1000);
     } else {
-      msg.textContent = data.message;
+      // mensagem mais clara para senha incorreta
+      msg.textContent = "Usuário ou senha incorretos. Tente novamente.";
       msg.style.color = "red";
     }
   } catch (err) {
     const msg = document.getElementById("mensagem");
-    msg.textContent = "Erro de conexão com servidor.";
+    msg.textContent = "Erro de conexão com o servidor.";
     msg.style.color = "red";
   }
 });
 
 // alternar visibilidade da senha
-const toggleSenha = document.getElementById("toggleSenha");
-const senhaInput = document.getElementById("password");
+document.addEventListener("DOMContentLoaded", () => {
+  const toggleSenha = document.getElementById("toggleSenha");
+  const senhaInput = document.getElementById("password");
 
-toggleSenha.addEventListener("click", () => {
-  if (senhaInput.type === "password") {
-    senhaInput.type = "text";
-    toggleSenha.textContent = "🙈"; // muda ícone para "ocultar"
-  } else {
-    senhaInput.type = "password";
-    toggleSenha.textContent = "👁️"; // volta para "mostrar"
+  if (!toggleSenha || !senhaInput) {
+    console.error("Elemento não encontrado");
+    return;
   }
+
+  // ícone inicial: senha oculta
+  toggleSenha.textContent = "👁️";
+
+  toggleSenha.addEventListener("click", () => {
+    if (senhaInput.type === "password") {
+      senhaInput.type = "text";
+      toggleSenha.textContent = "🙈"; // senha visível
+    } else {
+      senhaInput.type = "password";
+      toggleSenha.textContent = "👁️"; // senha oculta
+    }
+  });
 });
