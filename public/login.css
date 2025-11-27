@@ -8,7 +8,10 @@ body {
   justify-content: center;
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
-  background: #f0f0f0; /* cor neutra de fundo */
+  background: #f0f0f0;
+  justify-content: space-around;
+  align-content: space-around;
+
 }
 
 /* ondas nos cantos */
@@ -25,17 +28,15 @@ body::after {
     #28a745,
     #ff9800);
   opacity: 0.4;
-  z-index: 0; /* atrás do painel */
+  z-index: 0;
 }
 
-/* onda no canto superior esquerdo */
 body::before {
   top: -40%;
   left: -40%;
   animation: waveMotion 25s infinite alternate ease-in-out;
 }
 
-/* onda no canto inferior direito */
 body::after {
   bottom: -40%;
   right: -40%;
@@ -44,15 +45,15 @@ body::after {
 
 /* painel */
 .login-container {
-  position: relative;
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  width: 90%;
-  max-width: 360px;
-  text-align: center;
-  z-index: 1; /* fica acima das ondas */
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 260px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 /* animações */
@@ -71,22 +72,26 @@ body::after {
   100% { transform: rotate(360deg) scale(1.1) translate(0,0); }
 }
 
-/* visual titulo h2 */
+/* título */
 .login-container h2 {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   font-weight: 800;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  transition: all 0.3s ease; /* suaviza a animação */
+  transition: all 0.3s ease;
 }
 
 .login-container h2:hover {
-  color: #28a745; /* muda cor ao passar o mouse */
-  transform: scale(1.05); /* aumenta levemente */
-  text-shadow: 3px 3px 6px rgba(0,0,0,0.3); /* sombra mais forte */
+  color: #28a745;
+  transform: scale(1.05);
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
   cursor: pointer;
 }
 
-/* visual caixa de text h2 */
+.admin-title { color: #ff6b6b; }
+.user-title { color: #007bff; }
+.motorista-title { color: #ff9800; }
+
+/* campos */
 .input-group {
   position: relative;
   width: 100%;
@@ -94,43 +99,7 @@ body::after {
 }
 
 .input-group:hover {
-  transform: scale(1.02); /* leve zoom no campo */
-}
-
-.input-group input:hover,
-.input-group select:hover {
-  border-color: #28a745; /* borda verde ao passar o mouse */
-  box-shadow: 0 0 8px rgba(40,167,69,0.4); /* brilho suave */
-}
-
-/* 📦 Container central */
-.login-container {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-  width: 90%;
-  max-width: 360px;
-  text-align: center;
-  position: relative;
-  z-index: 1; /* garante que fica acima das ondas */
-}
-
-/* 🎯 Título */
-.login-container h2 {
-  margin-bottom: 20px;
-  font-weight: 800;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-}
-
-.admin-title { color: #ff6b6b; }
-.user-title { color: #007bff; }
-.motorista-title { color: #ff9800; }
-
-/* 🔑 Campos de entrada */
-.input-group {
-  position: relative;
-  width: 100%;
+  transform: scale(1.02);
 }
 
 .input-group input,
@@ -144,7 +113,13 @@ body::after {
   box-sizing: border-box;
 }
 
-/* 👁️ Ícone de mostrar/ocultar senha */
+.input-group input:hover,
+.input-group select:hover {
+  border-color: #28a745;
+  box-shadow: 0 0 8px rgba(40,167,69,0.4);
+}
+
+/* ícone senha */
 .toggle-icon {
   position: absolute;
   right: 10px;
@@ -155,12 +130,18 @@ body::after {
   color: #666;
   z-index: 2;
   pointer-events: auto;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
-/* 🔘 Botão */
+.toggle-icon:hover {
+  color: #28a745;
+  transform: rotate(15deg) scale(1.2);
+}
+
+/* botão */
 button {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   background: #28a745;
   color: #fff;
   border: none;
@@ -175,7 +156,7 @@ button:hover {
   background: #e46d6d;
 }
 
-/* 📢 Mensagem */
+/* mensagem */
 #mensagem {
   margin-top: 15px;
   font-weight: bold;
@@ -183,10 +164,14 @@ button:hover {
 }
 
 /* 📱 Responsividade */
-@media (max-width: 240px) {
+@media (max-width: 480px) {
   .login-container {
-    width: 95%;
     padding: 20px;
+    max-width: 95%;
+  }
+
+  .login-container h2 {
+    font-size: 18px;
   }
 
   .input-group input,
@@ -202,5 +187,42 @@ button:hover {
 
   .toggle-icon {
     font-size: 16px;
+  }
+
+  /* ondas menores em celular */
+  body::before,
+  body::after {
+    width: 160%;
+    height: 160%;
+    opacity: 0.25;
+  }
+}
+
+@media (max-width: 320px) {
+  .login-container {
+    padding: 15px;
+  }
+
+  .login-container h2 {
+    font-size: 16px;
+  }
+
+  .input-group input,
+  .input-group select {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  button {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  /* ondas ainda mais discretas */
+  body::before,
+  body::after {
+    width: 140%;
+    height: 140%;
+    opacity: 0.2;
   }
 }
