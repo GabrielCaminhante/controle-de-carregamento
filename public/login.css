@@ -1,22 +1,77 @@
-/* Fundo geral centralizado */
+/* Fundo geral com efeito pulsante */
 body {
   margin: 0;
-  height: 100vh;                  /* ocupa toda a altura da tela */
-  display: flex;                  /* ativa flexbox */
-  justify-content: center;        /* centraliza horizontalmente */
-  align-items: center;            /* centraliza verticalmente */
+  height: 100vh;
+  display: flex;
+  justify-content: center;   /* centraliza horizontalmente */
+  align-items: center;       /* centraliza verticalmente */
   font-family: 'Segoe UI', sans-serif;
   background: #f0f0f0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🔥 Camada 1 - círculo pulsante maior */
+body::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vmin;
+  height: 80vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    #ff6b6b,
+    #007bff,
+    #28a745,
+    #ff9800);
+  opacity: 0.2;
+  z-index: 0;
+  animation: pulseColors 14s infinite alternate ease-in-out;
+}
+
+/* 🔥 Camada 2 - círculo pulsante menor */
+body::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70vmin;
+  height: 70vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    #007bff,
+    #28a745,
+    #ff9800,
+    #ff6b6b);
+  opacity: 0.35;
+  z-index: 0;
+  animation: pulseColorsAlt 18s infinite alternate ease-in-out;
+}
+
+/* 🔄 Animações */
+@keyframes pulseColors {
+  0% { transform: translate(-50%, -50%) scale(0.9); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes pulseColorsAlt {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(0.95); }
 }
 
 /* 🎯 Painel */
 .login-container {
   background: #fff;
-  padding: clamp(20px, 4vw, 40px);   /* padding adaptável */
+  padding: clamp(20px, 4vw, 10px);
   border-radius: clamp(12px, 2vw, 20px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
   width: 90%;
-  max-width: 360px;                  /* limite em telas grandes */
+  max-width: 360px;
   text-align: center;
   position: relative;
   z-index: 1;
@@ -24,7 +79,7 @@ body {
 
 /* Título */
 .login-container h2 {
-  margin-bottom: clamp(16px, 3vw, 30px);
+  margin-bottom: clamp(16px, 3vw, 10px);
   font-weight: 800;
   font-size: clamp(18px, 4vw, 24px);
   color: #007bff;
@@ -103,6 +158,28 @@ button:hover {
   background: #e46d6d;
 }
 
+/* Mensagem dinâmica dentro do painel */
+#welcome-message {
+  width: 100%;
+  background: transparent;   /* fundo transparente */
+  color: #ff6b6b;            /* rosa padrão admin */
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(-20px); /* começa acima */
+  transition: all 0.8s ease;
+  margin-bottom: 20px;       /* espaço entre mensagem e título */
+}
+
+/* Quando ativa */
+#welcome-message.show {
+  opacity: 1;
+  transform: translateY(0);  /* desce suavemente */
+}
+
+
 /* Mensagem */
 #mensagem {
   margin-top: 15px;
@@ -111,209 +188,41 @@ button:hover {
   color: #333;
 }
 
-/* 📱 Ajustes extras para telas muito pequenas */
-@media (max-width: 320px) {
+/* 📱 Ajuste para celulares em modo retrato */
+@media (max-width: 480px) and (orientation: portrait) {
   .login-container {
-    max-width: 95%;
-    border-radius: 12px;
-  }
-}
-/* Fundo geral com efeito pulsante */
-body {
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;   /* centraliza horizontalmente */
-  align-items: center;       /* centraliza verticalmente */
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f0f0;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 🔥 Efeito pulsante circular atrás do painel */
-body::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120vmin;              /* proporcional à tela */
-  height: 120vmin;
-  border-radius: 50%;
-  background: radial-gradient(circle at center,
-    #ff6b6b,
-    #007bff,
-    #28a745,
-    #ff9800);
-  opacity: 0.25;
-  z-index: 0;
-  animation: pulseColors 12s infinite alternate ease-in-out;
-}
-
-/* 🔄 Animação pulsante */
-@keyframes pulseColors {
-  0% {
-    transform: translate(-50%, -50%) scale(0.9);
-    background: radial-gradient(circle at center,
-      #ff6b6b,
-      #007bff,
-      #28a745,
-      #ff9800);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.1);
-    background: radial-gradient(circle at center,
-      #007bff,
-      #28a745,
-      #ff9800,
-      #ff6b6b);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    background: radial-gradient(circle at center,
-      #28a745,
-      #ff9800,
-      #ff6b6b,
-      #007bff);
-  }
-}
-
-/* 🎯 Painel */
-.login-container {
-  background: #fff;
-  padding: 32px;
-  border-radius: 18px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  width: 90%;
-  max-width: 360px;
-  text-align: center;
-  position: relative;
-  z-index: 1; /* painel sempre acima do efeito */
-}
-
-/* Título */
-.login-container h2 {
-  margin-bottom: 24px;
-  font-weight: 800;
-  font-size: clamp(18px, 4vw, 24px);
-  color: #007bff;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-}
-
-.login-container h2:hover {
-  color: #28a745;
-  transform: scale(1.05);
-  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-  cursor: pointer;
-}
-
-/* Campos */
-.input-group {
-  position: relative;
-  width: 100%;
-  margin-bottom: 16px;
-  transition: transform 0.3s ease;
-}
-
-.input-group:hover {
-  transform: scale(1.02);
-}
-
-.input-group input,
-.input-group select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.input-group input:hover,
-.input-group select:hover {
-  border-color: #28a745;
-  box-shadow: 0 0 8px rgba(40,167,69,0.4);
-}
-
-/* Ícone de senha */
-.toggle-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 18px;
-  color: #666;
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.toggle-icon:hover {
-  color: #28a745;
-  transform: rotate(15deg) scale(1.2);
-}
-
-/* Botão */
-button {
-  width: 100%;
-  padding: 12px;
-  background: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background: #e46d6d;
-}
-
-/* Mensagem */
-#mensagem {
-  margin-top: 15px;
-  font-weight: bold;
-  font-size: 14px;
-  color: #333;
-}
-
-/* 📱 Responsividade */
-@media (max-width: 480px) {
-  .login-container {
-    padding: 24px;
-    max-width: 95%;
+    width: 80%;          /* ocupa 80% da largura */
+    height: 80%;         /* ocupa 80% da altura */
+    padding: 14px;
     border-radius: 16px;
   }
 
-  .login-container h2 {
-    font-size: 20px;
-  }
-
-  .input-group input,
-  .input-group select {
+  #welcome-message {
     font-size: 14px;
-    padding: 10px;
+    padding: 10px 16px;
+    top: -50px;
   }
-
-  button {
-    font-size: 14px;
-    padding: 10px;
-  }
-
-  .toggle-icon {
-    font-size: 16px;
+  #welcome-message.show {
+    top: 8px;
   }
 }
 
-@media (max-width: 320px) {
+/* 📱 Ajustes para celulares em modo paisagem (deitado) */
+@media (max-width: 640px) and (orientation: landscape) {
   .login-container {
+    width: 80%;          /* ocupa 80% da largura */
+    height: auto;        /* altura automática para não esmagar */
     padding: 20px;
-    max-width: 90%;
     border-radius: 14px;
+  }
+
+  #welcome-message {
+    font-size: 13px;
+    padding: 8px 14px;
+    top: -45px;
+  }
+  #welcome-message.show {
+    top: 6px;
   }
 
   .login-container h2 {
@@ -331,3 +240,4 @@ button:hover {
     padding: 8px;
   }
 }
+

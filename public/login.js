@@ -25,6 +25,30 @@ function updateTitleColor() {
   }
 }
 
+
+// Alternar senha
+document.getElementById("toggleSenha").addEventListener("click", () => {
+  const senha = document.getElementById("password");
+  senha.type = senha.type === "password" ? "text" : "password";
+});
+
+// Alternar senha
+document.getElementById("toggleSenha").addEventListener("click", () => {
+  const senha = document.getElementById("password");
+  senha.type = senha.type === "password" ? "text" : "password";
+});
+
+// Exibir mensagem ao carregar a página
+window.addEventListener("DOMContentLoaded", () => {
+  const msg = document.getElementById("welcome-message");
+  msg.classList.add("show");
+
+  // Mantém por 10 segundos e depois sobe
+  setTimeout(() => {
+    msg.classList.remove("show");
+  }, 10000); // 10 segundos
+});
+
 // evento para mudar cor ao selecionar
 roleSelect.addEventListener("change", updateTitleColor);
 
