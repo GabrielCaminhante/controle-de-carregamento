@@ -55,6 +55,9 @@ async function carregarInicial() {
 // ========= SALVAMENTO DO PAINEL =========
 function salvarPainel() {
   const payload = {
+    transportadoras: listaTransportadoras.map(t => ({
+      transportadora: t
+    })),
     cargas: linhasCargas || [],
     agendamento: linhasAgendamento || [],
     controle: linhasControle || []
@@ -261,7 +264,7 @@ function bindBotoes() {
   // Criar 1 linha no Agendamento
   if (btnAdicionarAgendamento) {
     btnAdicionarAgendamento.addEventListener("click", () => {
-      linhasAgendamento.push({ transportadora: "", dias: Array(7).fill("") });
+      linhasAgendamento.push({ transportadora: "", dias: Array(7).fill(""), status: Array(7).fill("não confirmado") });
       renderTabelaAgendamento();
       salvarPainel();
     });
