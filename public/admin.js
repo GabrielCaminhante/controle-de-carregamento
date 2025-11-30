@@ -1,7 +1,6 @@
 const porLote = 38;
 let linhasCargas = [];
 let linhasAgendamento = [];
-let listaTransportadoras = ["Transp A", "Transp B", "Transp C"]; // exemplo
 
 // ========= RENDERIZAÇÃO DE CARGAS =========
 function renderTabelaCargas() {
@@ -94,7 +93,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnAdicionarLinha").onclick = () => {
     const qtd = parseInt(document.getElementById("quantidade-linhas").value) || 1;
     for (let i = 0; i < qtd; i++) {
-      linhasCargas.push({ transportadora_nome: "" });
+      const novaCarga = { transportadora_nome: "" };
+      linhasCargas.push(novaCarga);
+      salvarCarga(novaCarga); // salva imediatamente no banco
     }
     renderTabelaCargas();
   };
@@ -106,7 +107,12 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   document.getElementById("btnAdicionarAgendamento").onclick = () => {
-    linhasAgendamento.push({ transportadora_nome: "", segunda:"", terca:"", quarta:"", quinta:"", sexta:"", sabado:"", domingo:"" });
+    const novoAgendamento = {
+      transportadora_nome: "",
+      segunda:"", terca:"", quarta:"", quinta:"", sexta:"", sabado:"", domingo:""
+    };
+    linhasAgendamento.push(novoAgendamento);
+    salvarAgendamento(novoAgendamento); // salva imediatamente no banco
     renderTabelaAgendamento();
   };
 
@@ -115,32 +121,78 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTabelaAgendamento();
   };
 
-  // inicial
-  renderTabelaCargas();
-  renderTabelaAgendamento();
+  // inicial: carregar dados do backend
+  carregarTransportadoras();
+  carregarDados();
 });
 
 // ========= AUTO‑SAVE =========
 function salvarCarga(carga) {
-  fetch("/cargas", {
-    method: "POST",
+  const url = carga.id ? `/cargas/${carga.id}` : "/cargas";
+  const method = carga.id ? "PUT" : "POST";
+
+  fetch(url, {
+    method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(carga)
   })
   .then(res => res.json())
-  .then(data => console.log("💾 Carga salva:", data))
+  .then(data => {
+    carga.id = data.id; // atualiza objeto com id do banco
+    console.log("💾 Carga salva:", data);
+  })
   .catch(err => console.error("Erro ao salvar carga:", err));
 }
 
 function salvarAgendamento(agendamento) {
-  fetch("/agendamento", {
-    method: "POST",
+  const url = agendamento.id ? `/agendamento/${agendamento.id}` : "/agendamento";
+  const method = agendamento.id ? "PUT" : "POST";
+
+  fetch(url, {
+    method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(agendamento)
   })
   .then(res => res.json())
-  .then(data => console.log("💾 Agendamento salvo:", data))
+  .then(data => {
+    agendamento.id = data.id; // atualiza objeto com id do banco
+    console.log("💾 Agendamento salvo:", data);
+  })
   .catch(err => console.error("Erro ao salvar agendamento:", err));
+}
+
+// ========= CARREGAR DADOS =========
+async function carregarDados() {
+  try {
+    const resCargas = await fetch("/cargas");
+    linhasCargas = await resCargas.json();
+
+    const resAgend = await fetch("/agendamentos");
+    linhasAgendamento = await resAgend.json();
+
+    renderTabelaCargas();
+    renderTabelaAgendamento();
+  } catch (err) {
+    console.error("Erro ao carregar dados:", err);
+  }
+}
+
+async function carregarTransportadoras() {
+  try {
+    const res = await fetch("/cadastros");
+    const transportadoras = await res.json();
+
+    const datalist = document.getElementById("lista-transportadoras");
+    datalist.innerHTML = "";
+
+    transportadoras.forEach(t => {
+      const option = document.createElement("option");
+      option.value = t.transportadora;
+      datalist.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar transportadoras:", err);
+  }
 }
 
 // ========= ABERTURA DE PAINÉIS =========
