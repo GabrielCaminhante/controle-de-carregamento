@@ -16,7 +16,7 @@ function updateTitleColor() {
     body.style.background = "linear-gradient(135deg, #ff6b6b, #28a745)";
   } else if (role === "user") {
     loginTitle.classList.add("user-title");
-    loginTitle.textContent = "Login do Usuário";
+    loginTitle.textContent = "Login Do Operador";
     body.style.background = "linear-gradient(135deg, #007bff, #6c757d)";
   } else if (role === "motorista") {
     loginTitle.classList.add("motorista-title");
