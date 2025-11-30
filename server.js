@@ -162,57 +162,102 @@ app.get("/cadastros", autenticar, async (req, res) => {
 });
 
 /* ---------------- ROTAS DE AGENDAMENTOS ---------------- */
-app.post("/agendamento", autenticar, async (req, res) => {
-  const { transportadora_id, transportadora_nome, dias } = req.body;
+app.post("/agendamento", autenticarAdmin, async (req, res) => {
+  const { transportadora_id, transportadora_nome, segunda, terca, quarta, quinta, sexta, sabado, domingo } = req.body;
 
-  if (!transportadora_nome || !Array.isArray(dias) || dias.length !== 7) {
-    return res.status(400).json({ message: "Transportadora e 7 dias são obrigatórios." });
+  try {
+    const result = await pool.query(
+      `INSERT INTO agendamentos 
+       (transportadora_id, transportadora_nome, segunda, terca, quarta, quinta, sexta, sabado, domingo)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      [
+        transportadora_id || null,
+        transportadora_nome || "",
+        segunda || null,
+        terca || null,
+        quarta || null,
+        quinta || null,
+        sexta || null,
+        sabado || null,
+        domingo || null
+      ]
+    );
+
+    io.emit("estadoAtualizado", { agendamentos: (await pool.query("SELECT * FROM agendamentos")).rows });
+    res.json(result.rows[0]); // devolve o registro com id
+  } catch (err) {
+    console.error("Erro ao salvar agendamento:", err);
+    res.status(500).json({ message: "Erro ao salvar agendamento." });
   }
-
-  await pool.query(
-    `INSERT INTO agendamentos 
-     (transportadora_id, transportadora_nome, segunda, terca, quarta, quinta, sexta, sabado, domingo)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-    [
-      transportadora_id,
-      transportadora_nome.trim(),
-      dias[0], dias[1], dias[2], dias[3], dias[4], dias[5], dias[6]
-    ]
-  );
-
-  const result = await pool.query("SELECT * FROM agendamentos");
-  io.emit("estadoAtualizado", { agendamentos: result.rows });
-
-  res.json({ message: "Agendamento criado com sucesso!" });
 });
+// Atualizar agendamento existente
+app.put("/agendamento/:id", autenticarAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { transportadora_id, transportadora_nome, segunda, terca, quarta, quinta, sexta, sabado, domingo } = req.body;
 
-app.get("/agendamentos", autenticar, async (req, res) => {
-  const result = await pool.query("SELECT * FROM agendamentos");
-  res.json(result.rows);
+  try {
+    const result = await pool.query(
+      `UPDATE agendamentos
+       SET transportadora_id = COALESCE($1, transportadora_id),
+           transportadora_nome = COALESCE($2, transportadora_nome),
+           segunda = COALESCE($3, segunda),
+           terca = COALESCE($4, terca),
+           quarta = COALESCE($5, quarta),
+           quinta = COALESCE($6, quinta),
+           sexta = COALESCE($7, sexta),
+           sabado = COALESCE($8, sabado),
+           domingo = COALESCE($9, domingo)
+       WHERE id = $10 RETURNING *`,
+      [transportadora_id || null, transportadora_nome || null, segunda, terca, quarta, quinta, sexta, sabado, domingo, id]
+    );
+
+    io.emit("estadoAtualizado", { agendamentos: (await pool.query("SELECT * FROM agendamentos")).rows });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Erro ao atualizar agendamento:", err);
+    res.status(500).json({ message: "Erro ao atualizar agendamento." });
+  }
 });
 
 /* ---------------- ROTAS DE CARGAS ---------------- */
 app.post("/cargas", autenticarAdmin, async (req, res) => {
   const { transportadora_id, transportadora_nome } = req.body;
 
-  if (!transportadora_id || !transportadora_nome) {
-    return res.status(400).json({ message: "Transportadora é obrigatória." });
+  try {
+    const result = await pool.query(
+      `INSERT INTO cargas (transportadora_id, transportadora_nome)
+       VALUES ($1, $2) RETURNING *`,
+      [transportadora_id || null, transportadora_nome || ""]
+    );
+
+    io.emit("estadoAtualizado", { cargas: (await pool.query("SELECT * FROM cargas")).rows });
+    res.json(result.rows[0]); // devolve o registro com id
+  } catch (err) {
+    console.error("Erro ao salvar carga:", err);
+    res.status(500).json({ message: "Erro ao salvar carga." });
   }
-
-  await pool.query(
-    `INSERT INTO cargas (transportadora_id, transportadora_nome) VALUES ($1, $2)`,
-    [transportadora_id, transportadora_nome.trim()]
-  );
-
-  const result = await pool.query("SELECT * FROM cargas");
-  io.emit("estadoAtualizado", { cargas: result.rows });
-
-  res.json({ message: "Carga cadastrada com sucesso!" });
 });
 
-app.get("/cargas", autenticar, async (req, res) => {
-  const result = await pool.query("SELECT * FROM cargas");
-  res.json(result.rows);
+// Atualizar carga existente
+app.put("/cargas/:id", autenticarAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { transportadora_id, transportadora_nome } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE cargas
+       SET transportadora_id = COALESCE($1, transportadora_id),
+           transportadora_nome = COALESCE($2, transportadora_nome)
+       WHERE id = $3 RETURNING *`,
+      [transportadora_id || null, transportadora_nome || null, id]
+    );
+
+    io.emit("estadoAtualizado", { cargas: (await pool.query("SELECT * FROM cargas")).rows });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Erro ao atualizar carga:", err);
+    res.status(500).json({ message: "Erro ao atualizar carga." });
+  }
 });
 
 /* ---------------- SOCKET.IO ---------------- */
