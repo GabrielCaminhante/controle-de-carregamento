@@ -1,114 +1,15 @@
-// ========= CONFIGURAÇÃO DE BASE =========
-const BASE_URL = window.location.origin;
-
-// Conexão com Socket.IO (usa mesma origem automaticamente)
-const socket = io(BASE_URL);
-
-// Endpoints do servidor (dinâmicos: local ou produção)
-const ENDPOINT_TRANSPORTADORAS = `${BASE_URL}/cadastros`; 
-const ENDPOINT_PAINEL = `${BASE_URL}/painel`;
-
-// Estado local
+const porLote = 38;
 let linhasCargas = [];
 let linhasAgendamento = [];
-let linhasControle = [];
-let listaTransportadoras = []; // nomes oficiais para seleção
+let listaTransportadoras = ["Transp A", "Transp B", "Transp C"]; // exemplo
 
-const porLote = 38;
-
-// ========= CARREGAMENTO INICIAL =========
-async function carregarInicial() {
-  try {
-    // 1) Transportadoras cadastradas (somente leitura)
-    const resT = await fetch(ENDPOINT_TRANSPORTADORAS, { credentials: "include" });
-    if (!resT.ok) throw new Error("Falha ao carregar transportadoras");
-    const transportadoras = await resT.json();
-    listaTransportadoras = transportadoras.map(t => t.transportadora).filter(Boolean);
-
-    // 2) Painel (cargas, agendamento, controle)
-    const resP = await fetch(ENDPOINT_PAINEL, { credentials: "include" });
-    if (!resP.ok) throw new Error("Falha ao carregar painel");
-    const painel = await resP.json();
-
-    linhasCargas = Array.isArray(painel.cargas) ? painel.cargas : [];
-    linhasAgendamento = Array.isArray(painel.agendamento) ? painel.agendamento : [];
-    linhasControle = Array.isArray(painel.controle) ? painel.controle : [];
-
-    atualizarListaTransportadoras();
-    renderTabelaCargas();
-    renderTabelaAgendamento();
-
-    console.log("✅ Painel e transportadoras carregados.");
-  } catch (err) {
-    console.error("⚠ Erro no carregamento inicial:", err);
-    const grid = document.getElementById("gridCargas");
-    if (grid) grid.innerHTML = '<p style="text-align:center; font-weight:bold; color:#555;">servidor offline.</p>';
-    const tbody = document.querySelector("#tabela-semanal tbody");
-    if (tbody) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="8">Erro ao carregar dados do servidor.</td>`;
-      tbody.appendChild(tr);
-    }
-  }
-}
-
-// ========= SALVAMENTO DO PAINEL =========
-function salvarPainel() {
-  const payload = {
-    transportadoras: listaTransportadoras.map(t => ({
-      transportadora: t
-    })),
-    cargas: linhasCargas || [],
-    agendamento: linhasAgendamento || [],
-    controle: linhasControle || []
-  };
-
-  fetch(ENDPOINT_PAINEL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    credentials: "include"
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Falha ao salvar painel");
-      console.log("💾 Painel salvo com sucesso.");
-    })
-    .catch(err => console.error("⚠ Erro ao salvar painel:", err));
-}
-
-// ========= SOCKET.IO =========
-socket.on("estadoAtualizado", (painel) => {
-  if (Array.isArray(painel.transportadoras)) {
-    listaTransportadoras = painel.transportadoras.map(t => t.transportadora).filter(Boolean);
-    atualizarListaTransportadoras();
-  }
-  linhasCargas = Array.isArray(painel.cargas) ? painel.cargas : [];
-  linhasAgendamento = Array.isArray(painel.agendamento) ? painel.agendamento : [];
-  linhasControle = Array.isArray(painel.controle) ? painel.controle : [];
-
-  renderTabelaCargas();
-  renderTabelaAgendamento();
-  console.log("🔄 Estado atualizado via socket.");
-});
-
-// ========= RENDERIZAÇÃO: CARGAS =========
+// ========= RENDERIZAÇÃO DE CARGAS =========
 function renderTabelaCargas() {
   const grid = document.getElementById("gridCargas");
   grid.innerHTML = "";
 
-  if (!linhasCargas || linhasCargas.length === 0) {
-    grid.innerHTML = '<p style="text-align:center; font-weight:bold; color:#555;">Nenhuma carga cadastrada.</p>';
-    return;
-  }
-
   const total = linhasCargas.length;
   const numLotes = Math.ceil(total / porLote);
-
-  const colunas = [document.createElement("div"), document.createElement("div")];
-  colunas.forEach(col => {
-    col.classList.add("linha-lotes");
-    grid.appendChild(col);
-  });
 
   for (let l = 0; l < numLotes; l++) {
     const bloco = document.createElement("div");
@@ -126,21 +27,17 @@ function renderTabelaCargas() {
       const tr = document.createElement("tr");
 
       const tdNum = document.createElement("td");
-      const inputNum = document.createElement("input");
-      inputNum.type = "number";
-      inputNum.value = i + 1;
-      inputNum.disabled = true;
-      tdNum.appendChild(inputNum);
+      tdNum.textContent = i + 1;
       tr.appendChild(tdNum);
 
       const tdTransp = document.createElement("td");
       const inputTransp = document.createElement("input");
       inputTransp.type = "text";
       inputTransp.setAttribute("list", "lista-transportadoras");
-      inputTransp.value = (linhasCargas[i]?.transportadora || "");
+      inputTransp.value = linhasCargas[i]?.transportadora_nome || "";
       inputTransp.oninput = () => {
-        linhasCargas[i].transportadora = inputTransp.value;
-        salvarPainel();
+        linhasCargas[i].transportadora_nome = inputTransp.value;
+        salvarCarga(linhasCargas[i]); // auto‑save
       };
       tdTransp.appendChild(inputTransp);
       tr.appendChild(tdTransp);
@@ -150,27 +47,14 @@ function renderTabelaCargas() {
 
     tabela.appendChild(tbody);
     bloco.appendChild(tabela);
-
-    const alvoColuna = l < 3 ? colunas[0] : colunas[1];
-    alvoColuna.appendChild(bloco);
+    grid.appendChild(bloco);
   }
 }
 
-// ========= RENDERIZAÇÃO: AGENDAMENTO =========
-const MAPA_TABELA_PARA_GETDAY = [1, 2, 3, 4, 5, 6, 0];
-
+// ========= RENDERIZAÇÃO DE AGENDAMENTOS =========
 function renderTabelaAgendamento() {
   const tbody = document.querySelector("#tabela-semanal tbody");
   tbody.innerHTML = "";
-
-  if (!linhasAgendamento || linhasAgendamento.length === 0) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="8" style="text-align:center; font-weight:bold; color:#555;">
-      Nenhum agendamento cadastrado.
-    </td>`;
-    tbody.appendChild(tr);
-    return;
-  }
 
   linhasAgendamento.forEach((linha, index) => {
     const tr = document.createElement("tr");
@@ -179,107 +63,84 @@ function renderTabelaAgendamento() {
     const inputTransp = document.createElement("input");
     inputTransp.type = "text";
     inputTransp.setAttribute("list", "lista-transportadoras");
-    inputTransp.value = (linha.transportadora || "");
+    inputTransp.value = linha.transportadora_nome || "";
     inputTransp.oninput = () => {
-      linhasAgendamento[index].transportadora = inputTransp.value;
-      salvarPainel();
+      linhasAgendamento[index].transportadora_nome = inputTransp.value;
+      salvarAgendamento(linhasAgendamento[index]); // auto‑save
     };
     tdTransp.appendChild(inputTransp);
     tr.appendChild(tdTransp);
 
-    for (let diaIndex = 0; diaIndex < 7; diaIndex++) {
+    const diasSemana = ["segunda","terca","quarta","quinta","sexta","sabado","domingo"];
+    diasSemana.forEach((dia) => {
       const tdDia = document.createElement("td");
       const inputHora = document.createElement("input");
       inputHora.type = "time";
-
-      const diaBackend = MAPA_TABELA_PARA_GETDAY[diaIndex];
-      inputHora.value = (linha.dias && linha.dias[diaBackend]) ? linha.dias[diaBackend] : "";
-
+      inputHora.value = linha[dia] || "";
       inputHora.oninput = () => {
-        if (!Array.isArray(linhasAgendamento[index].dias)) {
-          linhasAgendamento[index].dias = Array(7).fill("");
-        }
-        linhasAgendamento[index].dias[diaBackend] = inputHora.value;
-        salvarPainel();
+        linhasAgendamento[index][dia] = inputHora.value;
+        salvarAgendamento(linhasAgendamento[index]); // auto‑save
       };
-
       tdDia.appendChild(inputHora);
       tr.appendChild(tdDia);
-    }
+    });
 
     tbody.appendChild(tr);
   });
 }
 
-// ========= LISTA DE TRANSPORTADORAS =========
-function atualizarListaTransportadoras() {
-  const datalist = document.getElementById("lista-transportadoras");
-  if (!datalist) return;
+// ========= BOTÕES =========
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("btnAdicionarLinha").onclick = () => {
+    const qtd = parseInt(document.getElementById("quantidade-linhas").value) || 1;
+    for (let i = 0; i < qtd; i++) {
+      linhasCargas.push({ transportadora_nome: "" });
+    }
+    renderTabelaCargas();
+  };
 
-  datalist.innerHTML = "";
-  [...new Set(listaTransportadoras)].sort().forEach(nome => {
-    const opt = document.createElement("option");
-    opt.value = nome;
-    datalist.appendChild(opt);
-  });
+  document.getElementById("btnRemoverLinha").onclick = () => {
+    const qtd = parseInt(document.getElementById("quantidade-linhas").value) || 1;
+    linhasCargas.splice(-qtd, qtd);
+    renderTabelaCargas();
+  };
+
+  document.getElementById("btnAdicionarAgendamento").onclick = () => {
+    linhasAgendamento.push({ transportadora_nome: "", segunda:"", terca:"", quarta:"", quinta:"", sexta:"", sabado:"", domingo:"" });
+    renderTabelaAgendamento();
+  };
+
+  document.getElementById("btnRemoverAgendamento").onclick = () => {
+    linhasAgendamento.pop();
+    renderTabelaAgendamento();
+  };
+
+  // inicial
+  renderTabelaCargas();
+  renderTabelaAgendamento();
+});
+
+// ========= AUTO‑SAVE =========
+function salvarCarga(carga) {
+  fetch("/cargas", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(carga)
+  })
+  .then(res => res.json())
+  .then(data => console.log("💾 Carga salva:", data))
+  .catch(err => console.error("Erro ao salvar carga:", err));
 }
 
-// ========= AÇÕES DOS BOTÕES =========
-function bindBotoes() {
-  const btnAdicionarLinha = document.getElementById("btnAdicionarLinha");
-  const btnRemoverLinha = document.getElementById("btnRemoverLinha");
-  const qtdInput = document.getElementById("quantidade-linhas");
-
-  const btnAdicionarAgendamento = document.getElementById("btnAdicionarAgendamento");
-  const btnRemoverAgendamento = document.getElementById("btnRemoverAgendamento");
-
-  // Criar linhas em Cargas
-  if (btnAdicionarLinha) {
-    btnAdicionarLinha.addEventListener("click", () => {
-      const qtd = parseInt(qtdInput?.value, 10) || 1;
-      for (let i = 0; i < qtd; i++) {
-        linhasCargas.push({ transportadora: "" });
-      }
-      renderTabelaCargas();
-      salvarPainel();
-    });
-  }
-
-  // Remover linhas em Cargas
-  if (btnRemoverLinha) {
-    btnRemoverLinha.addEventListener("click", () => {
-      const qtd = parseInt(qtdInput?.value, 10) || 1;
-      if (qtd > linhasCargas.length) {
-        alert("⚠ Não há tantas linhas para remover.");
-        return;
-      }
-      for (let i = 0; i < qtd; i++) {
-        linhasCargas.pop();
-      }
-      renderTabelaCargas();
-      salvarPainel();
-    });
-  }
-
-  // Criar 1 linha no Agendamento
-  if (btnAdicionarAgendamento) {
-    btnAdicionarAgendamento.addEventListener("click", () => {
-      linhasAgendamento.push({ transportadora: "", dias: Array(7).fill(""), status: Array(7).fill("não confirmado") });
-      renderTabelaAgendamento();
-      salvarPainel();
-    });
-  }
-
-  // Remover 1 linha no Agendamento
-  if (btnRemoverAgendamento) {
-    btnRemoverAgendamento.addEventListener("click", () => {
-      if (linhasAgendamento.length > 0) {
-        linhasAgendamento.pop();
-        renderTabelaAgendamento();
-        salvarPainel();
-      }
-    });
-  }
+function salvarAgendamento(agendamento) {
+  fetch("/agendamento", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(agendamento)
+  })
+  .then(res => res.json())
+  .then(data => console.log("💾 Agendamento salvo:", data))
+  .catch(err => console.error("Erro ao salvar agendamento:", err));
 }
 
 // ========= ABERTURA DE PAINÉIS =========
@@ -287,35 +148,10 @@ function abrirPainelMotorista() {
   window.open("motorista.html", "painelMotorista");
 }
 
-function abrirPainelCadastro() {
-  window.open("cadastro.html", "painelCadastro");
-}
-
 function abrirPainelControle() {
   window.open("controle.html", "painelControle");
 }
 
-// referência da janela de cadastro
-let janelaCadastro = null;
-
-function abrirCadastro() {
-  if (janelaCadastro && !janelaCadastro.closed) {
-    janelaCadastro.focus();
-    alert("⚠ A página de cadastro já está aberta.");
-    return;
-  }
-  janelaCadastro = window.open("cadastro.html", "painelCadastro");
+function abrirPainelCadastro() {
+  window.open("cadastro.html", "painelCadastro");
 }
-
-// ligar ao botão existente
-document.addEventListener("DOMContentLoaded", () => {
-  const btnCadastro = document.getElementById("btnCadastro");
-  if (btnCadastro) {
-    btnCadastro.addEventListener("click", abrirCadastro);
-  }
-});
-
-// ========= INICIALIZAÇÃO =========
-document.addEventListener("DOMContentLoaded", () => {
-  carregarInicial().then(() => bindBotoes());
-});

@@ -10,20 +10,18 @@ const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 const bcrypt = require("bcrypt");
 
-// ✅ Teste das variáveis de ambiente
-console.log("DATABASE_URL:", process.env.DATABASE_URL ? "OK" : "NÃO DEFINIDO");
-console.log("SESSION_SECRET:", process.env.SESSION_SECRET ? "OK" : "NÃO DEFINIDO");
-console.log("ADMIN_PASSWORD_HASH:", process.env.ADMIN_PASSWORD_HASH ? "OK" : "NÃO DEFINIDO");
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔧 Conexão com PostgreSQL (Render fornece DATABASE_URL)
+// 🔧 Conexão com PostgreSQL
+const isLocal = process.env.NODE_ENV === "development";
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
+// Middlewares globais
 app.use(express.json());
 app.use(cors());
 
@@ -50,20 +48,20 @@ app.use((req, res, next) => {
     req.path.startsWith("/login") ||
     req.path.startsWith("/logout")
   ) {
-    return next(); // libera login, logout e index
+    return next();
   }
 
   if (!req.session.usuario) {
-    return res.redirect("/index.html"); // bloqueia quem não tem sessão
+    return res.redirect("/index.html");
   }
 
-  next(); // deixa passar quem está logado
+  next();
 });
 
-// 🔧 Só depois libera arquivos estáticos (CSS, JS, imagens)
+// 🔧 Arquivos estáticos
 app.use(express.static("public"));
 
-// 🔒 Rotas protegidas para HTMLs
+/* ---------------- ROTAS HTML PROTEGIDAS ---------------- */
 app.get("/cadastro.html", (req, res) => {
   if (!req.session.usuario || req.session.usuario.role !== "admin") {
     return res.redirect("/index.html");
@@ -92,17 +90,15 @@ app.get("/controle.html", (req, res) => {
   res.sendFile(__dirname + "/public/controle.html");
 });
 
-
-// 🔧 Middleware de autenticação
+/* ---------------- MIDDLEWARES DE AUTENTICAÇÃO ---------------- */
 function autenticar(req, res, next) {
   if (req.session && req.session.usuario) {
     return next();
   } else {
-    return res.status(401).json({ message: "Acesso negado. Faça login." }); 
+    return res.status(401).json({ message: "Acesso negado. Faça login." });
   }
 }
 
-// 🔧 Middleware para restringir admin
 function autenticarAdmin(req, res, next) {
   if (req.session?.usuario?.role === "admin") {
     return next();
@@ -116,26 +112,15 @@ app.post("/login", async (req, res) => {
   const { username, password, role } = req.body;
 
   try {
-    // busca usuário no banco
     const result = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
     const user = result.rows[0];
 
-    if (!user) {
-      return res.status(401).json({ message: "Usuário não encontrado." });
-    }
+    if (!user) return res.status(401).json({ message: "Usuário não encontrado." });
+    if (user.role !== role) return res.status(401).json({ message: "Tipo de login inválido." });
 
-    // confere role
-    if (user.role !== role) {
-      return res.status(401).json({ message: "Tipo de login inválido para este usuário." });
-    }
-
-    // compara senha com hash
     const valido = await bcrypt.compare(password, user.password);
-    if (!valido) {
-      return res.status(401).json({ message: "Senha incorreta." });
-    }
+    if (!valido) return res.status(401).json({ message: "Senha incorreta." });
 
-    // salva sessão
     req.session.usuario = { id: user.id, username: user.username, role: user.role };
     res.json({ message: "Login realizado com sucesso!" });
 
@@ -151,7 +136,7 @@ app.post("/logout", (req, res) => {
   });
 });
 
-/* ---------------- ROTAS DE CADASTRO ---------------- */
+/* ---------------- ROTAS DE TRANSPORTADORAS ---------------- */
 app.post("/cadastro", autenticarAdmin, async (req, res) => {
   const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
 
@@ -176,66 +161,57 @@ app.get("/cadastros", autenticar, async (req, res) => {
   res.json(result.rows);
 });
 
-app.put("/cadastro/:id", autenticarAdmin, async (req, res) => {
-  const { id } = req.params;
-  const { transportadora, motorista, contato, responsavel, contatoResponsavel } = req.body;
-
-  await pool.query(
-    `UPDATE transportadoras 
-     SET transportadora = COALESCE($1, transportadora),
-         motorista = COALESCE($2, motorista),
-         contato = COALESCE($3, contato),
-         responsavel = COALESCE($4, responsavel),
-         contato_responsavel = COALESCE($5, contato_responsavel)
-     WHERE id = $6`,
-    [
-      transportadora?.trim() || null,
-      motorista?.trim() || null,
-      contato?.trim() || null,
-      responsavel?.trim() || null,
-      contatoResponsavel?.trim() || null,
-      id
-    ]
-  );
-
-  const result = await pool.query("SELECT * FROM transportadoras");
-  io.emit("estadoAtualizado", { transportadoras: result.rows });
-
-  res.json({ message: "Cadastro atualizado com sucesso!" });
-});
-
-app.delete("/cadastro/:id", autenticarAdmin, async (req, res) => {
-  const { id } = req.params;
-  await pool.query("DELETE FROM transportadoras WHERE id=$1", [id]);
-
-  const result = await pool.query("SELECT * FROM transportadoras");
-  io.emit("estadoAtualizado", { transportadoras: result.rows });
-
-  res.json({ message: "Cadastro removido com sucesso!" });
-});
-
-/* ---------------- ROTAS DE AGENDAMENTO ---------------- */
+/* ---------------- ROTAS DE AGENDAMENTOS ---------------- */
 app.post("/agendamento", autenticar, async (req, res) => {
-  const { transportadora, dias } = req.body;
+  const { transportadora_id, transportadora_nome, dias } = req.body;
 
-  if (!transportadora || !Array.isArray(dias) || dias.length !== 7) {
+  if (!transportadora_nome || !Array.isArray(dias) || dias.length !== 7) {
     return res.status(400).json({ message: "Transportadora e 7 dias são obrigatórios." });
   }
 
   await pool.query(
-    `INSERT INTO agendamentos (transportadora, dias, status)
-     VALUES ($1, $2, $3)`,
-    [transportadora.trim(), dias, Array(7).fill("não confirmado")]
+    `INSERT INTO agendamentos 
+     (transportadora_id, transportadora_nome, segunda, terca, quarta, quinta, sexta, sabado, domingo)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+    [
+      transportadora_id,
+      transportadora_nome.trim(),
+      dias[0], dias[1], dias[2], dias[3], dias[4], dias[5], dias[6]
+    ]
   );
 
   const result = await pool.query("SELECT * FROM agendamentos");
-  io.emit("estadoAtualizado", { agendamento: result.rows });
+  io.emit("estadoAtualizado", { agendamentos: result.rows });
 
   res.json({ message: "Agendamento criado com sucesso!" });
 });
 
 app.get("/agendamentos", autenticar, async (req, res) => {
   const result = await pool.query("SELECT * FROM agendamentos");
+  res.json(result.rows);
+});
+
+/* ---------------- ROTAS DE CARGAS ---------------- */
+app.post("/cargas", autenticarAdmin, async (req, res) => {
+  const { transportadora_id, transportadora_nome } = req.body;
+
+  if (!transportadora_id || !transportadora_nome) {
+    return res.status(400).json({ message: "Transportadora é obrigatória." });
+  }
+
+  await pool.query(
+    `INSERT INTO cargas (transportadora_id, transportadora_nome) VALUES ($1, $2)`,
+    [transportadora_id, transportadora_nome.trim()]
+  );
+
+  const result = await pool.query("SELECT * FROM cargas");
+  io.emit("estadoAtualizado", { cargas: result.rows });
+
+  res.json({ message: "Carga cadastrada com sucesso!" });
+});
+
+app.get("/cargas", autenticar, async (req, res) => {
+  const result = await pool.query("SELECT * FROM cargas");
   res.json(result.rows);
 });
 
@@ -248,26 +224,29 @@ io.on("connection", async (socket) => {
 
   const transportadoras = await pool.query("SELECT * FROM transportadoras");
   const agendamentos = await pool.query("SELECT * FROM agendamentos");
+  const cargas = await pool.query("SELECT * FROM cargas");
 
   socket.emit("estadoInicial", {
     transportadoras: transportadoras.rows,
-    agendamento: agendamentos.rows
+    agendamentos: agendamentos.rows,
+    cargas: cargas.rows
   });
 
   socket.on("atualizarPainel", async () => {
     const transportadoras = await pool.query("SELECT * FROM transportadoras");
     const agendamentos = await pool.query("SELECT * FROM agendamentos");
+    const cargas = await pool.query("SELECT * FROM cargas");
 
     io.emit("estadoAtualizado", {
       transportadoras: transportadoras.rows,
-      agendamento: agendamentos.rows
+      agendamentos: agendamentos.rows,
+      cargas: cargas.rows
     });
     console.log("📢 Painel atualizado via socket.io");
   });
 });
 
-
-
+/* ---------------- START SERVER ---------------- */
 server.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });

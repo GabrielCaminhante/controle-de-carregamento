@@ -7,29 +7,32 @@
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
+  <!-- Cabeçalho -->
   <header>
     <h1>Painel do Administrador</h1>
   </header>
 
-  <nav class="painel-administrador" role="toolbar">
+  <!-- Botões principais -->
+  <nav class="painel-administrador">
     <div class="botoes-admin-panel">
-      <button id="btnCadastro" class="botao-final">📝 Cadastrar</button>
-      <button id="btnControleCargas" onclick="abrirPainelControle()">📦 Controle de Cargas</button>
-      <button id="btnPainelMotorista" onclick="abrirPainelMotorista()">🚚 Painel do Motorista</button>
+      <button onclick="abrirPainelCadastro()">📝 Cadastro</button>
+      <button onclick="abrirPainelControle()">📦 Controle de Cargas</button>
+      <button onclick="abrirPainelMotorista()">🚚 Painel do Motorista</button>
       <button id="btnAdicionarLinha">➕ Linha</button>
-      <input type="number" id="quantidade-linhas" placeholder="Qtd de linhas" min="1" style="width: 100px;">
+      <input type="number" id="quantidade-linhas" placeholder="Qtd" min="1">
       <button id="btnRemoverLinha">➖ Linha</button>
     </div>
   </nav>
 
-  <!-- 📦 Tabela de Cargas -->
-  <section aria-label="Tabela de Cargas">
+  <!-- Blocos de Cargas -->
+  <section>
+    <h2>Lista de Cargas</h2>
     <div id="gridCargas"></div>
   </section>
 
-  <!-- 📅 Tabela de Agendamento Semanal -->
-  <section class="tabela-agendamento" aria-label="Agendamento Semanal">
-    <h1>Agendamento Semanal</h1>
+  <!-- Agendamento Semanal -->
+  <section class="tabela-agendamento">
+    <h2>Agendamento Semanal</h2>
     <div class="botoes-admin">
       <button id="btnAdicionarAgendamento">➕ Linha</button>
       <button id="btnRemoverAgendamento">➖ Linha</button>
@@ -37,27 +40,23 @@
     <table id="tabela-semanal">
       <thead>
         <tr>
-          <th scope="col">Transportadora</th>
-          <th scope="col">Segunda</th>
-          <th scope="col">Terça</th>
-          <th scope="col">Quarta</th>
-          <th scope="col">Quinta</th>
-          <th scope="col">Sexta</th>
-          <th scope="col">Sábado</th>
-          <th scope="col">Domingo</th>
+          <th>Transportadora</th>
+          <th>Segunda</th>
+          <th>Terça</th>
+          <th>Quarta</th>
+          <th>Quinta</th>
+          <th>Sexta</th>
+          <th>Sábado</th>
+          <th>Domingo</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- preenchido dinamicamente pelo JS -->
-      </tbody>
+      <tbody></tbody>
     </table>
   </section>
 
-  <!-- ✅ Preenchimento automático -->
+  <!-- Lista de transportadoras para autocomplete -->
   <datalist id="lista-transportadoras"></datalist>
 
-  <!-- ✅ Socket.IO e Admin.js -->
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
   <script src="admin.js"></script>
 </body>
 </html>
