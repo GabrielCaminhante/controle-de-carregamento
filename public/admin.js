@@ -2,6 +2,9 @@ const porLote = 38;
 let linhasCargas = [];
 let linhasAgendamento = [];
 
+// 🔧 Backend no Render
+const API_URL = "https://controle-de-carregamento.onrender.com";
+
 // ========= RENDERIZAÇÃO DE CARGAS =========
 function renderTabelaCargas() {
   const grid = document.getElementById("gridCargas");
@@ -128,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ========= AUTO‑SAVE =========
 function salvarCarga(carga) {
-  const url = carga.id ? `/cargas/${carga.id}` : "/cargas";
+  const url = carga.id ? `${API_URL}/cargas/${carga.id}` : `${API_URL}/cargas`;
   const method = carga.id ? "PUT" : "POST";
 
   fetch(url, {
@@ -145,7 +148,7 @@ function salvarCarga(carga) {
 }
 
 function salvarAgendamento(agendamento) {
-  const url = agendamento.id ? `/agendamento/${agendamento.id}` : "/agendamento";
+  const url = agendamento.id ? `${API_URL}/agendamento/${agendamento.id}` : `${API_URL}/agendamento`;
   const method = agendamento.id ? "PUT" : "POST";
 
   fetch(url, {
@@ -164,10 +167,10 @@ function salvarAgendamento(agendamento) {
 // ========= CARREGAR DADOS =========
 async function carregarDados() {
   try {
-    const resCargas = await fetch("/cargas");
+    const resCargas = await fetch(`${API_URL}/cargas`);
     linhasCargas = await resCargas.json();
 
-    const resAgend = await fetch("/agendamentos");
+    const resAgend = await fetch(`${API_URL}/agendamentos`);
     linhasAgendamento = await resAgend.json();
 
     renderTabelaCargas();
@@ -179,7 +182,7 @@ async function carregarDados() {
 
 async function carregarTransportadoras() {
   try {
-    const res = await fetch("/cadastros");
+    const res = await fetch(`${API_URL}/cadastros`);
     const transportadoras = await res.json();
 
     const datalist = document.getElementById("lista-transportadoras");
