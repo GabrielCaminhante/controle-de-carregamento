@@ -266,6 +266,8 @@ io.on("connection", async (socket) => {
   });
 });
 
+
+
 server.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
